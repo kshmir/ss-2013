@@ -23,7 +23,7 @@ module Simulator
 			end
 
 			def step
-				# @next_arrival_time.calculate = 
+				arrival_time = @next_arrival_time.calculate
 			end
 
 			def self.with_algorithm algorithm, params = {}
@@ -37,7 +37,7 @@ module Simulator
 				@arrival_times = []
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 10000
-				@next_arrival_time = 0 # RandomVariable
+				@next_arrival_time = RandomVariable.new :dpois, lambda: 5 
 				@rejected_size = 0
 				@main_queue = Router.new params
 				@clients_limit = input_variables[:clients_limit] || 10
