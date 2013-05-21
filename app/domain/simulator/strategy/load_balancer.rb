@@ -41,6 +41,7 @@ module Simulator
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 10000
 				@next_arrival_time = RandomVariable.new :dpois, lambda: 5 
+				@next_exit_time = RandomVariable.new :dnorm, lambda: 5, mean: 30
 				@rejected_size = 0
 				@main_queue = Router.new params
 				@clients_limit = input_variables[:clients_limit] || 10
@@ -66,7 +67,7 @@ module Simulator
 				attr_accessor :queue
 
 				def init params = {}
-					queue = []
+					queue = Queue.new
 					queueLimit = params[:input_variables][:queue_limit] || 1000
 				end				
 			end
@@ -84,19 +85,36 @@ module Simulator
 
 			def finish_requests arrival_time
 				dyno_ending_before_next_arrival = @clients.select { |dyno| arrival_time < dyno.endtime }
-				dyno_ending_before_next_arrival.sort! { |dyno1,dyno2| dyno1.endtime <=> dyno2.endtime }
+				until dyno_ending_before_next_arrival == [] do
+						dyno_ending_before_next_arrival.sort! { |dyno1,dyno2| dyno1.endtime <=> dyno2.endtime }
 
-				dyno_ending_before_next_arrival.each do |dyno|
-					@T = dyno.endtime
-					if dyno.queue.length == 0
-						idle = true
-						# principio de tiempo ocioso
-					else
-						dyno.queue.deq
-					end
+						dyno_ending_before_next_arrival.each do |dyno|
+								@T = dyno.endtime
+								if dyno.queue.length == 0
+										idle = true
+										# principio de tiempo ocioso
+								else
+										dyno.queue.deq
+								end
+						end
+						dispatch_from_main_queue
+						dyno_ending_before_next_arrival = @clients.select { |dyno| arrival_time < dyno.endtime }
 				end
 			end
-				
+
+			def dispatch_from_main_queue
+					dyno = @algorithm.next_router_to_use @clients 
+					unless dyno.nil?
+							request = queue.pop
+							if dyno.idle?
+									dyno.idle = false
+									#incrementar tiempo de ociosidad
+							end
+							dyno.queue.push request
+							dyno.endtime = @T + @next_exit_time.calculate
+					end
+			end
+
 
 			# Cool stuff
 		end
