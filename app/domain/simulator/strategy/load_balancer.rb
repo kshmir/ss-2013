@@ -24,6 +24,9 @@ module Simulator
 
 			def step
 				arrival_time = @next_arrival_time.calculate
+				finish_requests arrival_time
+
+
 			end
 
 			def self.with_algorithm algorithm, params = {}
@@ -72,12 +75,29 @@ module Simulator
 				attr_accessor :queue, :idle, :endtime
 
 				def init params = {}
-					queue = []
+					queue = Queue.new
 					idle = false
 					endtime = 0
 					queueLimit = params[:input_variables][:queue_limit] || 100
 				end
 			end
+
+			def finish_requests arrival_time
+				dyno_ending_before_next_arrival = @clients.select { |dyno| arrival_time < dyno.endtime }
+				dyno_ending_before_next_arrival.sort! { |dyno1,dyno2| dyno1.endtime <=> dyno2.endtime }
+
+				dyno_ending_before_next_arrival.each do |dyno|
+					@T = dyno.endtime
+					if dyno.queue.length == 0
+						idle = true
+						# principio de tiempo ocioso
+					else
+						dyno.queue.deq
+					end
+				end
+			end
+				
+
 			# Cool stuff
 		end
 	end
