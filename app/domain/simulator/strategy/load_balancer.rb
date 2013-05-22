@@ -11,7 +11,7 @@ module Simulator
 
 			def verify!
 				begin
-					raise "Invalid Algoritm" if control_functions[:algorithm].responds_to? :do_queue
+					raise "Invalid Algoritm" if control_functions[:algorithm].responds_to? :compute_next_dyno_to_use
 				rescue
 					raise "Expected algorithm!" if control_functions[:algorithm].nil?
 					raise "Unexpected error"
@@ -81,6 +81,10 @@ module Simulator
 					endtime = 0
 					queueLimit = params[:input_variables][:queue_limit] || 100
 				end
+
+				def is_queue_full?
+						queue.length >= queueLimit
+				end
 			end
 
 			def finish_requests arrival_time
@@ -103,7 +107,7 @@ module Simulator
 			end
 
 			def dispatch_from_main_queue
-					dyno = @algorithm.next_router_to_use @clients 
+					dyno = @algorithm.compute_next_dyno_to_use @clients 
 					unless dyno.nil?
 							request = queue.pop
 							if dyno.idle?
