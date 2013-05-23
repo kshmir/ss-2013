@@ -10,9 +10,7 @@ module Simulator
 								end
 
 								def compute_next_dyno_to_use!
-										#this function should not be called if there is no dyno available
-										#because of the most infinite loop that would follow
-										raise "No dyno eligible" if clients.count { |dyno| dyno.length > 0 } <= 0
+										super
 
 										until found_a_dyno do
 												client = @clients[@@fish_monger.new(@clients.length)]
