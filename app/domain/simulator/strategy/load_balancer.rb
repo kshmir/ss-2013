@@ -73,7 +73,7 @@ module Simulator
 
 				def initialize params = {}
 					@queue = []
-					@queueLimit = params[:input_variables][:queue_limit] || 1000
+					@queue_limit = params[:input_variables][:queue_limit] || 1000
 				end				
 			end
 
@@ -84,11 +84,11 @@ module Simulator
 					@queue = []
 					@idle = false
 					@endtime = 0
-					@queueLimit = params[:input_variables][:queue_limit] || 100
+					@queue_limit = params[:input_variables][:queue_limit] || 100
 				end
 
 				def is_queue_full?
-					@queue.length >= @queueLimit
+					@queue.length >= @queue_limit
 				end
 
 				def idle?
@@ -126,7 +126,6 @@ module Simulator
 									dyno.idle = false
 									#incrementar tiempo de ociosidad
 							end
-							puts "Pushed into dyno #{dyno}, called from #{caller[0][/`.*'/][1..-2]}"
 							dyno.queue.push request
 							dyno.endtime = time + @next_exit_time.calculate
 					end

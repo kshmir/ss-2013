@@ -7,7 +7,7 @@ module Simulator
 
 					# in the case all the dynos are busy,
 					# return no dyno
-					# return nil if @clients.count { |dyno| dyno.queue.size == 0 } == @clients.count
+					# return nil if @clients.count { |dyno| dyno.queue.size == 0 } == 0
 
 					index = -1
 					client = nil
