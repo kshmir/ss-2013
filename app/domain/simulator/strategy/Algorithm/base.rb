@@ -11,7 +11,7 @@ module Simulator
 				def compute
 					#this function should not be called if there is no dyno available
 					#because of the most likely infinite loop that would follow
-					return nil if @clients.reject { |x| x.nil? }.count { |dyno| dyno.queue.size > 0 } <= 0
+					return nil if @clients.reject { |x| x.nil? }.count { |dyno| dyno.is_queue_full? } >= @clients.reject { |x| x.nil? }.count
 				end
 			end
 		end
