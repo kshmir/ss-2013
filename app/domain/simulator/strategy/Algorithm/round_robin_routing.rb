@@ -4,7 +4,7 @@ module Simulator
 			class RoundRobinRouting < Base
 				def initialize clients
 					super clients
-					@last_elected = 0
+					@last_elected = -1
 				end
 
 				def compute

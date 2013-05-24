@@ -155,6 +155,7 @@ DEPENDENCIES
   pry-rails
   pry-stack_explorer
   rails (= 3.2.13)
+  rspec-mocks
   rspec-rails
   rsruby
   sass-rails (~> 3.2.3)
