@@ -12,7 +12,7 @@ module Simulator
 			def verify!
 				# TODO: Make this work fine
 				# begin
-				# 	raise "Invalid Algoritm" if control_functions[:algorithm].responds_to? :compute_next_dyno_to_use
+				# 	raise "Invalid Algoritm" if control_functions[:algorithm].responds_to? :compute
 				# rescue Exception => e
 				# 	raise "Expected algorithm!" if control_functions[:algorithm].nil?
 				# 	binding.pry

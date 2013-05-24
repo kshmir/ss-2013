@@ -2,7 +2,7 @@ module Simulator
 	module Strategy
 		module Algorithm
 			class RandomRouting < Base
-				def initialize seed=Time.now.to_i, client
+				def initialize seed=Time.now.to_i, clients
 					super clients
 					@@fish_monger = Random.new(seed) 
 					#TODO: the pseudorandom generator shouldn't be called
@@ -11,9 +11,10 @@ module Simulator
 
 				def compute
 					super
+				  client = nil
 					loop do # Review this... it will be too slow
-						client = @clients[@@fish_monger.new(@clients.length)]
-						break if client.is_queue_full?
+						client = @clients[@@fish_monger.rand(@clients.length)]
+						break if !client.is_queue_full?
 					end
 					client
 				end

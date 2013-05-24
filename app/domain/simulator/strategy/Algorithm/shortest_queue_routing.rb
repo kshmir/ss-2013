@@ -11,7 +11,7 @@ module Simulator
 					# would it be useful to do a shuffle
 					# to ensure not using always the same
 					# minimum ?
-					@clients.min_by { |dyno| dyno.queue_length }
+					@clients.min_by { |dyno| dyno.queue.size }
 				end
 			end
 		end

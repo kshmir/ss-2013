@@ -9,11 +9,11 @@ module Simulator
 
 				def compute
 					super
-
+				  client = nil
 					loop do
-						@last_elected += 1
+						@last_elected = (@last_elected + 1) % @clients.size 
 						client = @clients[@last_elected]
-						break if client.is_queue_full?
+						break if !client.is_queue_full?
 					end
 					client
 				end
