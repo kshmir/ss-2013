@@ -1,8 +1,6 @@
 module Simulator
 	module Core
-		def simulate strategy
-			strategy.verify!
-			strategy.init!
+		def self.simulate strategy
 			while not strategy.finished?
 				
 				# strategy.before_step

@@ -10,10 +10,10 @@ module Simulator
 				def compute
 					super
 
-					until found_a_dyno do
+					loop do
 						@last_elected += 1
 						client = @clients[@last_elected]
-						found_a_dyno = not client.is_queue_full?
+						break if client.is_queue_full?
 					end
 					client
 				end

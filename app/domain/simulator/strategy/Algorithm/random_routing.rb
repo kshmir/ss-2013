@@ -11,9 +11,9 @@ module Simulator
 
 				def compute
 					super
-					until found_a_dyno do # Review this... it will be too slow
+					loop do # Review this... it will be too slow
 						client = @clients[@@fish_monger.new(@clients.length)]
-						found_a_dyno = not client.is_queue_full?
+						break if client.is_queue_full?
 					end
 					client
 				end

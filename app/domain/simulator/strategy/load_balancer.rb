@@ -10,12 +10,14 @@ module Simulator
 
 
 			def verify!
-				begin
-					raise "Invalid Algoritm" if control_functions[:algorithm].responds_to? :compute_next_dyno_to_use
-				rescue
-					raise "Expected algorithm!" if control_functions[:algorithm].nil?
-					raise "Unexpected error"
-				end
+				# TODO: Make this work fine
+				# begin
+				# 	raise "Invalid Algoritm" if control_functions[:algorithm].responds_to? :compute_next_dyno_to_use
+				# rescue Exception => e
+				# 	raise "Expected algorithm!" if control_functions[:algorithm].nil?
+				# 	binding.pry
+				# 	raise "Unexpected error"
+				# end
 			end
 
 			def finished?
@@ -41,7 +43,7 @@ module Simulator
 				@t = 0
 				@arrival_times = []
 				@current_iteration = 0
-				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 10000
+				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
 				@next_arrival_time = RandomVariable.new :dpois, lambda: 5 
 				@next_exit_time = RandomVariable.new :dnorm, sd: 5, mean: 30
 				@rejected_size = 0

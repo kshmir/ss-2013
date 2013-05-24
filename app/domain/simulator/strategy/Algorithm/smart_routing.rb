@@ -14,7 +14,7 @@ module Simulator
 					loop do
 						index += 1
 						client = @clients[index]
-						break if client.queue.size == 0
+						break if client.nil? || client.queue.size == 0
 					end
 					client
 				end
