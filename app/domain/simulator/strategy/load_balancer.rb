@@ -106,8 +106,8 @@ module Simulator
 									dyno.queue.deq
 							end
 					end
-					dispatch_queue_at arrival_time
 					break	if next_dynos.empty?
+					dispatch_queue_at arrival_time
 				end
 			end
 
@@ -124,7 +124,7 @@ module Simulator
 									dyno.idle = false
 									#incrementar tiempo de ociosidad
 							end
-							puts "Pushed into dyno #{dyno}"
+							puts "Pushed into dyno #{dyno}, called from #{caller[0][/`.*'/][1..-2]}"
 							dyno.queue.push request
 							dyno.endtime = time + @next_exit_time.calculate
 					end
