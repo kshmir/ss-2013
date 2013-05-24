@@ -11,7 +11,7 @@ module Simulator
 
 			def verify!
 				begin
-					raise "Invalid Algoritm" if control_functions[:algorithm].responds_to? :compute_next_dyno_to_use
+					raise "Invalid Algoritm" if control_functions[:algorithm].responds_to? :compute
 				rescue
 					raise "Expected algorithm!" if control_functions[:algorithm].nil?
 					raise "Unexpected error"
