@@ -5,11 +5,11 @@ module Simulator
 										:obj_functions, 
 										:control_functions, :params
 
-			def init params = {}
+			def initialize params = {}
 				@obj_functions = params[:obj_functions] || {}
 				@input_variables = params[:input_variables] || {}
 				@control_functions = params[:control_functions] || {}
-				@params = {}
+				@params = params
 			end
 		end
 	end
