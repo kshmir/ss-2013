@@ -28,7 +28,14 @@ module Simulator
 				arrival_time = @next_arrival_time.calculate
 				finish_dyno_requests(@t + arrival_time)
 				@t = @t + arrival_time
-				dispatch_queue_at @t
+				if @main_queue.queue.size < @main_queue.queue_limit
+					@main_queue.queue << @t
+					@accepted += 1
+					dispatch_queue_at @t
+				else
+					@rejected += 1
+				end
+
 				@current_iteration = @current_iteration + 1
 			end
 
@@ -41,6 +48,8 @@ module Simulator
 			private
 			def init
 				@t = 0
+				@accepted = 0
+				@rejected = 0
 				@arrival_times = []
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
@@ -105,7 +114,7 @@ module Simulator
 									idle = true
 									# principio de tiempo ocioso
 							else
-									dyno.queue.deq
+									dyno.queue.pop
 							end
 					end
 					break	if next_dynos.empty?
@@ -126,7 +135,7 @@ module Simulator
 									dyno.idle = false
 									#incrementar tiempo de ociosidad
 							end
-							dyno.queue.push request
+							dyno.queue.push @t
 							dyno.endtime = time + @next_exit_time.calculate
 					end
 			end
