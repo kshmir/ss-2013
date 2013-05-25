@@ -28,7 +28,7 @@ module Simulator
 				arrival_time = @next_arrival_time.calculate
 				finish_dyno_requests(@t + arrival_time)
 				@t = @t + arrival_time
-				if @main_queue.queue.size < @main_queue.queue_limit
+				if not @main_queue.is_queue_full?
 					@main_queue.queue << @t
 					@accepted += 1
 					dispatch_queue_at @t
@@ -84,6 +84,10 @@ module Simulator
 					@queue = []
 					@queue_limit = params[:input_variables][:queue_limit] || 1000
 				end				
+
+				def is_queue_full?
+					@queue.length >= @queue_limit
+				end
 			end
 
 			class Client
