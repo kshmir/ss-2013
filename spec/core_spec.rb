@@ -5,8 +5,23 @@ describe Simulator::Core do
   context "Calling the main simulator" do
     %w(RandomRouting RoundRobinRouting ShortestQueueRouting SmartRouting).each do |name|
       algorithm = "Simulator::Strategy::Algorithm::#{name}".constantize
+
+			before (:each) do
+				@arrival_times_generator = mock(Simulator::Strategy::RandomVariable)
+				@exit_times_generator = mock(Simulator::Strategy::RandomVariable)
+			end
+
       it "Should finish with no errors with algorithm #{name}" do
-        load_balancer = init_load_balancer_with algorithm
+				params = {}
+				params[:input_variables] = { clients_limit: 2,
+																		 max_amount_of_iterations: 5,
+																		 next_arrival_time: @arrival_times_generator,
+																		 next_exit_time: @exit_times_generator }
+        load_balancer = init_load_balancer_with algorithm, params
+
+				@arrival_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,2,1,1,1)
+				@exit_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,1,4,4,4)
+
         Simulator::Core.simulate load_balancer
       end
     end
@@ -17,8 +32,8 @@ describe Simulator::Strategy::Algorithm::RoundRobinRouting do
 	context "Computing the next dyno to use" do
 
 		before (:each) do
-			@client1 = mock(Simulator::Strategy::LoadBalancer::Client)
-			@client2 = mock(Simulator::Strategy::LoadBalancer::Client)
+			@client1 = mock(Simulator::Strategy::RequestProcessor::Client)
+			@client2 = mock(Simulator::Strategy::RequestProcessor::Client)
 			@gen = Simulator::Strategy::Algorithm::RoundRobinRouting.new [@client1,@client2]
 		end
 
@@ -53,7 +68,7 @@ end
 describe Simulator::Strategy::Algorithm::SmartRouting do
 	context "Computing the next dyno to use" do
 		before (:each) do
-			@clients = (1..5).map { mock(Simulator::Strategy::LoadBalancer::Client) }
+			@clients = (1..5).map { mock(Simulator::Strategy::RequestProcessor::Client) }
 			@gen = Simulator::Strategy::Algorithm::SmartRouting.new @clients
 		end
 

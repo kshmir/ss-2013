@@ -7,6 +7,7 @@ module Simulator
 				strategy.step
 				# strategy.after_step
 			end
+			strategy.terminate
 		end
 	end
 end

@@ -7,8 +7,6 @@ module Simulator
 				init
 			end
 
-
-
 			def verify!
 				# TODO: Make this work fine
 				# begin
@@ -21,15 +19,19 @@ module Simulator
 			end
 
 			def finished?
-				@current_iteration > @max_amount_of_iterations
+				@current_iteration >= @max_amount_of_iterations
 			end
 
 			def step
-				arrival_time = @next_arrival_time.calculate
-				finish_dyno_requests(@t + arrival_time)
-				@t = @t + arrival_time
-				if not @main_queue.is_queue_full?
-					@main_queue.queue << @t
+				interarrival_time = @next_arrival_time.calculate
+				next_arrival = @t + interarrival_time
+				puts "next arrival scheduled at #{next_arrival}"
+				finish_dyno_requests(next_arrival)
+				@t = next_arrival
+				req = Request.new @t
+				puts "req #{req.id} arrived on time #{@t}"
+				if not @router.is_queue_full?
+					@router.queue << req
 					@accepted += 1
 					dispatch_queue_at @t
 				else
@@ -37,6 +39,12 @@ module Simulator
 				end
 
 				@current_iteration = @current_iteration + 1
+			end
+
+			def terminate
+				until @router.queue.empty? && @clients.all? { |dyno| dyno.idle? }
+					finish_dyno_requests Float::INFINITY
+				end
 			end
 
 			def self.with_algorithm algorithm, params = {}
@@ -53,95 +61,43 @@ module Simulator
 				@arrival_times = []
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
-				@next_arrival_time = RandomVariable.new :dpois, lambda: 5 
-				@next_exit_time = RandomVariable.new :dnorm, sd: 5, mean: 30
+				@next_arrival_time = input_variables[:next_arrival_time] || (RandomVariable.new :dpois, lambda: 5) 
+				@next_exit_time = input_variables[:next_exit_time] || (RandomVariable.new :dnorm, sd: 5, mean: 30)
 				@rejected_size = 0
-				@main_queue = Router.new params
+				@router = RequestProcessor::Router.new params
 				@clients_limit = input_variables[:clients_limit] || 10
-				@clients = (1..@clients_limit).map { Client.new(params) }
+				@clients = (1..@clients_limit).map { RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit_time}) )}
 				@algorithm = control_functions[:algorithm].send :new, @clients
 			end
 
-			class RandomVariable
-				attr_accessor :method, :params
-
-				def initialize method, params = {}
-					@@r ||= RSRuby.instance
-					@method = method
-					@params = params
-				end
-
-				def calculate n = 1
-					@@r.send(@method, n, @params)
-				end
-
-			end
-
-			class Router
-				attr_accessor :queue
-
-				def initialize params = {}
-					@queue = []
-					@queue_limit = params[:input_variables][:queue_limit] || 1000
-				end				
-
-				def is_queue_full?
-					@queue.length >= @queue_limit
-				end
-			end
-
-			class Client
-				attr_accessor :queue, :idle, :endtime
-
-				def initialize params = {}
-					@queue = []
-					@idle = false
-					@endtime = 0
-					@queue_limit = params[:input_variables][:queue_limit] || 100
-				end
-
-				def is_queue_full?
-					@queue.length >= @queue_limit
-				end
-
-				def idle?
-					@idle
-				end
-			end
 
 			def finish_dyno_requests arrival_time
 				loop do
 					next_dynos = next_dynos_for arrival_time
 					next_dynos.each do |dyno|
-							arrival_time = dyno.endtime
-							if dyno.queue.length == 0
-									idle = true
-									# principio de tiempo ocioso
-							else
-									dyno.queue.pop
-							end
+						@t = dyno.finish_request
 					end
 					break	if next_dynos.empty?
-					dispatch_queue_at arrival_time
+					dispatch_queue_at @t
 				end
 			end
 
 			def next_dynos_for arrival
-				@clients.select { |dyno| arrival < dyno.endtime }
+				@clients.reject { |dyno| dyno.idle? }
+								.select { |dyno| dyno.endtime < arrival }
 				        .sort! { |dyno1,dyno2| dyno1.endtime <=> dyno2.endtime }
 			end
 
 			def dispatch_queue_at time
+				loop do
+					break if @router.queue.size <= 0
 					dyno = @algorithm.compute
 					unless dyno.nil?
-							request = dyno.queue.pop
-							if dyno.idle?
-									dyno.idle = false
-									#incrementar tiempo de ociosidad
-							end
-							dyno.queue.push @t
-							dyno.endtime = time + @next_exit_time.calculate
+						req = @router.queue.shift
+						puts "req #{req.id} leaves the router"
+						dyno.enqueue_request time, req
 					end
+				end
 			end
 
 
