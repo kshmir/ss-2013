@@ -7,20 +7,20 @@ describe Simulator::Core do
       algorithm = "Simulator::Strategy::Algorithm::#{name}".constantize
 
 			before (:each) do
-				@arrival_times_generator = mock(Simulator::Strategy::RandomVariable)
-				@exit_times_generator = mock(Simulator::Strategy::RandomVariable)
+#         @arrival_times_generator = mock(Simulator::Strategy::RandomVariable)
+#         @exit_times_generator = mock(Simulator::Strategy::RandomVariable)
 			end
 
       it "Should finish with no errors with algorithm #{name}" do
 				params = {}
-				params[:input_variables] = { clients_limit: 2,
-																		 max_amount_of_iterations: 5,
-																		 next_arrival_time: @arrival_times_generator,
-																		 next_exit_time: @exit_times_generator }
+         params[:input_variables] = { clients_limit: 3,
+                                      max_amount_of_iterations: 50}
+#                                      next_arrival_time: @arrival_times_generator,
+#                                      next_exit_time: @exit_times_generator }
         load_balancer = init_load_balancer_with algorithm, params
 
-				@arrival_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,2,0.9,1,1)
-				@exit_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,1,4,4,4)
+#         @arrival_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,2,0.9,1,1)
+#         @exit_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,1,4,4,4)
 
         Simulator::Core.simulate load_balancer
       end
