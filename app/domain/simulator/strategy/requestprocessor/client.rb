@@ -3,7 +3,8 @@ module Simulator
 		module RequestProcessor
 
 			class Client < Base
-				attr_accessor :idle, :endtime, :current_request
+				attr_accessor :idle, :endtime, :current_request, :id
+				@@counter = 0
 
 				def initialize params = {}
 					super params
@@ -11,10 +12,13 @@ module Simulator
 					@endtime = 0
 					@queue_limit ||= 100
 					@exit_time_generator = params[:exit_time_generator]
+					@id = @@counter
+					@@counter += 1
 				end
 
 				def enqueue_request current_time, req
 					req.enter_into_dyno_time = current_time
+					puts "req #{req.id} entered dyno #{@id}"
 					if @idle
 						@idle = false
 						@endtime = current_time + @exit_time_generator.calculate

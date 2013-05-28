@@ -90,13 +90,11 @@ module Simulator
 
 			def dispatch_queue_at time
 				loop do
-					break if @router.queue.size <= 0
 					dyno = @algorithm.compute
-					unless dyno.nil?
-						req = @router.queue.shift
-						puts "req #{req.id} leaves the router"
-						dyno.enqueue_request time, req
-					end
+					break if @router.queue.size <= 0 || dyno.nil?
+					req = @router.queue.shift
+					puts "req #{req.id} leaves the router"
+					dyno.enqueue_request time, req
 				end
 			end
 

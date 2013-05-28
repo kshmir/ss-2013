@@ -19,7 +19,7 @@ describe Simulator::Core do
 																		 next_exit_time: @exit_times_generator }
         load_balancer = init_load_balancer_with algorithm, params
 
-				@arrival_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,2,1,1,1)
+				@arrival_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,2,0.9,1,1)
 				@exit_times_generator.should_receive(:calculate).exactly(5).times.and_return(1,1,4,4,4)
 
         Simulator::Core.simulate load_balancer
@@ -73,14 +73,22 @@ describe Simulator::Strategy::Algorithm::SmartRouting do
 		end
 
 		it "should select the empty dyno" do
-			[0,1,2,4].each { |i| @clients[i].should_receive(:queue).any_number_of_times.and_return([nil]) }
+			[0,1,2,4].each { |i| @clients[i].should_receive(:idle?).any_number_of_times.and_return(false) }
 			[0,1,2,4].each { |i| @clients[i].should_receive(:is_queue_full?).any_number_of_times.and_return(false) }
 
-			@clients[3].should_receive(:queue).any_number_of_times.and_return([])
+			@clients[3].should_receive(:idle?).any_number_of_times.and_return(true)
 			@clients[3].should_receive(:is_queue_full?).any_number_of_times.and_return(false)
 
 			answer = @gen.compute
 			answer.should equal(@clients[3])
+		end
+
+		it "should not select any dyno as they are all busy" do
+			(0..4).each { |i| @clients[i].should_receive(:idle?).any_number_of_times.and_return(false) }
+			(0..4).each { |i| @clients[i].should_receive(:is_queue_full?).any_number_of_times.and_return(false) }
+
+			answer = @gen.compute
+			answer.should equal(nil)
 		end
 	end
 end
