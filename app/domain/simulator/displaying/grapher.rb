@@ -21,7 +21,7 @@ module Simulator
 
 			def plot
 				@r.par(mfrow: [1,@ys.size])
-				@ys.each { |y| @r.plot(@x,y) }
+				@ys.each { |y| @r.plot(@x,y,{type: "o",pch: 15}) }
 				sleep(2)
 			end
 		end
