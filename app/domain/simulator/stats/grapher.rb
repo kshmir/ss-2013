@@ -20,8 +20,10 @@ module Simulator
 			end
 
 			def plot
+				@r.pdf("rplot.pdf")
 				@r.par(mfrow: [2,@ys.size/2])
 				@ys.each { |y| @r.plot(@x,y,{type: "o",pch: 15}) }
+				@r.eval_R("dev.off()")
 			end
 		end
 	

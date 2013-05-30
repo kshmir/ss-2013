@@ -2,7 +2,7 @@ module Simulator
 	module Stats
 
 		class Collector
-			attr_reader :last_step_stats
+			attr_reader :last_step_stats, :results
 
 			def initialize clients
 				@clients = clients
