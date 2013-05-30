@@ -7,7 +7,8 @@ gem 'rails', '3.2.13'
 
 gem 'sqlite3'
 gem 'rsruby'
-
+gem 'resque'
+gem 'haml'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -15,8 +16,22 @@ group :assets do
 	gem 'sass-rails',   '~> 3.2.3'
 	gem 'coffee-rails', '~> 3.2.1'
 
+	gem "therubyracer"
+	gem "less-rails" #Sprockets (what Rails 3.1 uses for its asset pipeline) supports LESS
+	gem "twitter-bootstrap-rails"
+
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
   # gem 'therubyracer', :platforms => :ruby
+
+  gem 'guard'                   # Guard event handler.
+  # Dependency to prevent polling. Setup for multiple OS environments.
+  # Optionally remove the lines not specific to your OS.
+  # https://github.com/guard/guard#efficient-filesystem-handling
+  gem 'rb-inotify', :require => false # Linux
+  gem 'rb-fsevent', :require => false # Mac OSX
+  gem 'rb-fchange', :require => false # Windows
+
+  gem 'guard-livereload'
 
   gem 'uglifier', '>= 1.0.3'
 end

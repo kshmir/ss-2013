@@ -34,4 +34,8 @@ Ss::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = true
+
+  config.generators do |g|
+    g.template_engine :haml
+  end
 end
