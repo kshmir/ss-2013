@@ -1,5 +1,5 @@
 require 'pry'
-require 'rspec_helper'
+require 'spec_helper'
 
 describe Simulator::Core do
   context "Calling the main simulator" do

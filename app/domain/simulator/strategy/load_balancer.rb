@@ -36,28 +36,13 @@ module Simulator
 					@rejected += 1
 				end
 
-				collect_stats
+				@stats_collector.collect_stats @t
 				@current_iteration = @current_iteration + 1
-			end
-
-			def collect_stats
-				stats = { queue_size: @clients.map { |c| c.queue.size },
-								  idle_time:  @clients.map { |c| c.cumulative_idle_time } }
-				@results[:clients_stats] << stats
-				@clients.each do |c|
-					until c.processed_req.empty? do
-						req = c.processed_req.shift
-						@results[:req_stats] << req.exit_from_dyno_time - req.enter_into_router_time
-					end
-				end
-				@grapher.add @t, stats[:queue_size]
 			end
 
 			def terminate
 					finish_dyno_requests Float::INFINITY
-					puts @results
-					@grapher.plot
-					sleep(3)
+					@stats_collector.display_and_plot
 			end
 
 			def self.with_algorithm algorithm, params = {}
@@ -81,8 +66,7 @@ module Simulator
 				@clients_limit = input_variables[:clients_limit] || 10
 				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit_time}) )}
 				@algorithm = control_functions[:algorithm].send :new, @clients
-				@results = {clients_stats: [], req_stats: []}
-				@grapher = Simulator::Displaying::Grapher.new @clients.size, @clients.map { |c| "dyno #{c.id}" }
+				@stats_collector = Simulator::Stats::Collector.new @clients
 			end
 
 

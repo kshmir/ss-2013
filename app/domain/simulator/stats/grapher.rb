@@ -1,7 +1,7 @@
 require 'rsruby'
 
 module Simulator
-	module Displaying
+	module Stats
 		
 		class Grapher
 
@@ -20,9 +20,8 @@ module Simulator
 			end
 
 			def plot
-				@r.par(mfrow: [1,@ys.size])
+				@r.par(mfrow: [2,@ys.size/2])
 				@ys.each { |y| @r.plot(@x,y,{type: "o",pch: 15}) }
-				sleep(2)
 			end
 		end
 	
