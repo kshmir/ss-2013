@@ -1,0 +1,7 @@
+.js-simulation.hidden{ "data-id" => @sim.id, "data-percentage" => @sim.percentage }
+	%h3
+		Simulando...
+	.progress.progress-striped.active
+		.bar{ :style => "width:#{@sim.percentage}%"}
+.js-simview.hidden
+	Simview

@@ -11,13 +11,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130528200021) do
+ActiveRecord::Schema.define(:version => 20130530222031) do
 
   create_table "simulations", :force => true do |t|
     t.datetime "ended_at"
     t.text     "content"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.float    "percentage"
   end
 
 end
