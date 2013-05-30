@@ -3,7 +3,7 @@ module Simulator
 		module RequestProcessor
 
 			class Base
-				attr_accessor :queue, :queue_limit
+				attr_reader :queue, :queue_limit
 
 				def initialize params = {}
 					@queue = []

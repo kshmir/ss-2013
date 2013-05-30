@@ -3,44 +3,46 @@ module Simulator
 		module RequestProcessor
 
 			class Client < Base
-				attr_accessor :idle, :endtime, :current_request, :id
+				attr_accessor :processed_req
+				attr_reader :endtime, :current_request, :id, :cumulative_idle_time
 				@@counter = 0
 
 				def initialize params = {}
 					super params
+					@start_idle_time = 0
 					@idle = true
+					@cumulative_idle_time = 0
 					@endtime = 0
 					@queue_limit ||= 100
 					@exit_time_generator = params[:exit_time_generator]
 					@id = @@counter
 					@@counter += 1
+					@processed_req = []
 				end
 
 				def enqueue_request current_time, req
 					req.enter_into_dyno_time = current_time
-					puts "req #{req.id} entered dyno #{@id}"
 					if @idle
 						@idle = false
+						@cumulative_idle_time += current_time - @start_idle_time
 						@endtime = current_time + @exit_time_generator.calculate
-						puts "req #{req.id} is scheduled to leave at #{@endtime}"
 						@current_request = req
 					else
 						@queue << req
 					end
 				end
 
-				def finish_request
+				def finish_request 
+					#@endtime is the current_time when this function is called
 					@current_request.exit_from_dyno_time = @endtime 
-					puts "end of request #{@current_request.id} (#{@current_request.enter_into_router_time},"+
-																											"#{@current_request.enter_into_dyno_time},"+
-																											"#{@current_request.exit_from_dyno_time})\n"
+					@processed_req << @current_request
 					if @queue.empty?
 						@idle = true
+						@start_idle_time = @endtime
 						@current_request = nil
 					else
 						@current_request = @queue.shift
 						@endtime += @exit_time_generator.calculate
-						puts "req #{@current_request.id} is scheduled to leave at #{@endtime}"
 					end
 					@endtime
 				end

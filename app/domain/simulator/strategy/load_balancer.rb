@@ -25,11 +25,9 @@ module Simulator
 			def step
 				interarrival_time = @next_arrival_time.calculate
 				next_arrival = @t + interarrival_time
-				puts "next arrival scheduled at #{next_arrival}"
 				finish_dyno_requests(next_arrival)
 				@t = next_arrival
 				req = Request.new @t
-				puts "req #{req.id} arrived on time #{@t}"
 				if not @router.is_queue_full?
 					@router.queue << req
 					@accepted += 1
@@ -38,13 +36,28 @@ module Simulator
 					@rejected += 1
 				end
 
+				collect_stats
 				@current_iteration = @current_iteration + 1
 			end
 
-			def terminate
-				until @router.queue.empty? && @clients.all? { |dyno| dyno.idle? }
-					finish_dyno_requests Float::INFINITY
+			def collect_stats
+				stats = { queue_size: @clients.map { |c| c.queue.size },
+								  idle_time:  @clients.map { |c| c.cumulative_idle_time } }
+				@results[:clients_stats] << stats
+				@clients.each do |c|
+					until c.processed_req.empty? do
+						req = c.processed_req.shift
+						@results[:req_stats] << req.exit_from_dyno_time - req.enter_into_router_time
+					end
 				end
+				@grapher.add @t, stats[:queue_size]
+			end
+
+			def terminate
+					finish_dyno_requests Float::INFINITY
+					puts @results
+					@grapher.plot
+					sleep(3)
 			end
 
 			def self.with_algorithm algorithm, params = {}
@@ -61,30 +74,30 @@ module Simulator
 				@arrival_times = []
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
-				@next_arrival_time = input_variables[:next_arrival_time] || (RandomVariable.new :dpois, lambda: 5) 
-				@next_exit_time = input_variables[:next_exit_time] || (RandomVariable.new :dnorm, sd: 5, mean: 30)
+				@next_arrival_time = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 150) 
+				@next_exit_time = input_variables[:next_exit_time] || (Simulator::Strategy::RandomVariable.new :rweibull, shape: 0.46, scale: 110.92)
 				@rejected_size = 0
-				@router = RequestProcessor::Router.new params
+				@router = Simulator::Strategy::RequestProcessor::Router.new params
 				@clients_limit = input_variables[:clients_limit] || 10
-				@clients = (1..@clients_limit).map { RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit_time}) )}
+				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit_time}) )}
 				@algorithm = control_functions[:algorithm].send :new, @clients
+				@results = {clients_stats: [], req_stats: []}
+				@grapher = Simulator::Displaying::Grapher.new @clients.size, @clients.map { |c| "dyno #{c.id}" }
 			end
 
 
 			def finish_dyno_requests arrival_time
 				loop do
 					next_dynos = next_dynos_for arrival_time
-					next_dynos.each do |dyno|
-						@t = dyno.finish_request
-					end
 					break	if next_dynos.empty?
+					next_dynos.each { |dyno| @t = dyno.finish_request }
 					dispatch_queue_at @t
 				end
 			end
 
-			def next_dynos_for arrival
+			def next_dynos_for arrival_time
 				@clients.reject { |dyno| dyno.idle? }
-								.select { |dyno| dyno.endtime < arrival }
+								.select { |dyno| dyno.endtime < arrival_time }
 				        .sort! { |dyno1,dyno2| dyno1.endtime <=> dyno2.endtime }
 			end
 
@@ -93,13 +106,10 @@ module Simulator
 					dyno = @algorithm.compute
 					break if @router.queue.size <= 0 || dyno.nil?
 					req = @router.queue.shift
-					puts "req #{req.id} leaves the router"
 					dyno.enqueue_request time, req
 				end
 			end
 
-
-			# Cool stuff
 		end
 	end
 end

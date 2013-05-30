@@ -6,6 +6,7 @@ module Simulator
 										:control_functions, :params
 
 			def initialize params = {}
+				puts params.is_a? Hash
 				@obj_functions = params[:obj_functions] || {}
 				@input_variables = params[:input_variables] || {}
 				@control_functions = params[:control_functions] || {}
