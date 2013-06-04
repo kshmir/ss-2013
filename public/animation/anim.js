@@ -10,8 +10,8 @@ function setup(numberOfQueues)
     orig = playground.offset();
 
     router = $('<div class="router"/>');
-    router.css("left",190);//orig.left+playground.width()/2);
-    router.css("top",orig.top+30);
+    router.css("left",playground.width()/2);
+    router.css("top",30);
     playground.append(router);
 
     var hspace = playground.width() / 6;
@@ -91,11 +91,12 @@ function anim_fromRouterToDyno(tl, ball, i)
     queue[i].size++;
     queue[i].text.text(queue[i].size);
 
+    var destination_left = queue[i].obj.offset().left-router.offset().left+5;
     tl.add( TweenMax.to(ball.obj, 2, {bezier: {
 	type: "soft",
-	values: [{x:queue[i].obj.offset().left, y:80}, 
-		 {x:queue[i].obj.offset().left, y:140}, 
-		 {x:queue[i].obj.offset().left, y:280 - ball.spot*22 }],
+	values: [{x:destination_left, y:80}, 
+		 {x:destination_left, y:140}, 
+		 {x:destination_left, y:280 - ball.spot*22 }],
 	autoRotate: true
     }}));
 }
