@@ -1,0 +1,48 @@
+div#other-block
+{
+    width: 400px;
+    height: 400px;
+    background-color: #005500;
+    left: 500px;
+    position: relative;
+} 
+
+div#playground 
+{
+    width: 400px;
+    height: 400px;
+}
+
+.ball
+{
+    background:url("pelota.png");
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-color: transparent;
+}
+
+.queue
+{
+    background:url("cola.png");
+    width: 30px;
+    height: 100px;
+    position: absolute;
+    background-color: transparent;
+}
+
+.queue p
+{
+    position: relative;
+    left: -10px;
+    top: -20px;
+}
+
+.router
+{
+    background:url("router.png");
+    width: 50px;
+    height: 50px;
+    position: absolute;
+}
+
