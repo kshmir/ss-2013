@@ -1,3 +1,6 @@
+#= require TweenMax.min
+#= require anim
+
 simulator = 
 	init: ()->
 		percentage = simulator.percentage = $(".js-simulation").data("percentage")		

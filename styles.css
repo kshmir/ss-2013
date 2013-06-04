@@ -15,16 +15,19 @@ div#playground
 
 .ball
 {
-    background:url("pelota.png");
+    /*background:url("pelota.png");*/
     width: 20px;
     height: 20px;
     position: absolute;
     background-color: transparent;
+    border: 1px dashed blue;
+    border-radius: 8px;
 }
 
 .queue
 {
-    background:url("cola.png");
+    border: 1px dashed black;
+    border-radius: 8px;
     width: 30px;
     height: 100px;
     position: absolute;
@@ -40,7 +43,9 @@ div#playground
 
 .router
 {
-    background:url("router.png");
+    border: 1px dashed silver;
+    border-radius: 8px;
+/*    background:url("router.png");*/
     width: 50px;
     height: 50px;
     position: absolute;
