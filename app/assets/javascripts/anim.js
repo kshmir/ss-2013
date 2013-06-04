@@ -118,8 +118,8 @@ function anim_fromRouterToExit(tl, ball)
 function anim_leaveDyno(tl, ball, i)
 {
     debugger;
-    var dX = ball.obj.offset().left-router.offset().left - 5; 
-    var dY = ball.obj.offset().top-internet.offset().top - 25;
+    var dX = ball.obj.offset().left-router.offset().left - 5 + Math.random()*internet.width()/2 - internet.width()/4; 
+    var dY = internet.offset().top - ball.obj.offset().top + Math.random()*(internet.height()-ball.obj.height());
 
     tl.add(TweenMax.to(ball.obj, 3, 
 	   {bezier: {
