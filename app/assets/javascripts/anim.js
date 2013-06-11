@@ -32,7 +32,7 @@ function setup(numberOfQueues)
 }
 
 
-function createAnimation() 
+function createAnimation(dyno) 
 {
     var ball = {obj: $('<div class="ball"></div>'), 
 		spot: -1};
@@ -44,19 +44,19 @@ function createAnimation()
 //var dyno = Math.floor(Math.random()*5+1)-1;
 
 //pseudo-smart routing
-    var dyno = -1;
-    for (var i = 0, tried = Math.floor(Math.random()*N); i < N && dyno == -1 ; i++)
-    {
-        if (queue[tried].size < queue[tried].spots.length)
-        {
-	    dyno = tried;
-        }
-        else
-        {
-	    tried = (tried + 1) % N;
-        }
-    }
-
+//    var dyno = -1;
+//    for (var i = 0, tried = Math.floor(Math.random()*N); i < N && dyno == -1 ; i++)
+//    {
+//        if (queue[tried].size < queue[tried].spots.length)
+//        {
+//	    dyno = tried;
+//        }
+//        else
+//        {
+//	    tried = (tried + 1) % N;
+//        }
+//    }
+//
     var tl = new TimelineLite();
     if (dyno == -1 || queue[dyno].size>=queue[dyno].spots.length)
     {

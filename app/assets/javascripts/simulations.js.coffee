@@ -12,7 +12,7 @@ simulator =
 		id = $(".js-simulation").attr "data-id"
 		$.getJSON "/simulations/#{id}.json",(data)->
 			sim = data
-			rows = sim.content
+			rows = sim.content.stats
 			data = _.map rows, (row)-> row.queue_size[0]
 			i = 0
 			data = _.map data, (item)-> { t: (i++), value: item }
@@ -28,6 +28,8 @@ simulator =
 			id = $(".js-simulation").attr "data-id"
 			$.getJSON("/simulations/#{id}.json",(data)->
 				$(".js-simulation").removeClass("hidden")
+				if data.content
+				    createAnimation(dyno) for dyno in data.content.current_clients
 				simulator.percentage = perc = data.percentage
 				$(".bar").css("width", "#{perc}%")
 				if (parseInt(perc) < 100.0)

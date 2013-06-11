@@ -28,17 +28,18 @@ module Simulator
 				finish_dyno_requests(next_arrival)
 				@t = next_arrival
 				req = Request.new @t
+				elected_clients = []
 				if not @router.is_queue_full?
 					@router.queue << req
 					@accepted += 1
-					dispatch_queue_at @t
+					elected_clients = dispatch_queue_at @t
 				else
 					@rejected += 1
 				end
 
 				stats = @stats_collector.collect_stats @t
 				@current_iteration = @current_iteration + 1
-				yield(@current_iteration, @max_amount_of_iterations, stats)
+				yield(@current_iteration, @max_amount_of_iterations, stats, elected_clients)
 			end
 
 			def terminate
@@ -87,12 +88,15 @@ module Simulator
 			end
 
 			def dispatch_queue_at time
+				elected_clients = []
 				loop do
 					dyno = @algorithm.compute
 					break if @router.queue.size <= 0 || dyno.nil?
 					req = @router.queue.shift
 					dyno.enqueue_request time, req
+					elected_clients << dyno.id
 				end
+				elected_clients
 			end
 
 		end
