@@ -2,6 +2,8 @@ module Simulator
 	module Strategy
 		class LoadBalancer < Base
 
+			attr_reader :stats_collector
+
 			def initialize params = {}
 				super(params)
 				init
