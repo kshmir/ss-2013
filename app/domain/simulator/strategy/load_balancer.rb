@@ -1,6 +1,6 @@
 module Simulator
 	module Strategy
-		class LoadBalancer < Base
+		class LoadBalancer < Strategy::Base
 
 			def initialize params = {}
 				super(params)

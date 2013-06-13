@@ -1,7 +1,7 @@
 module Simulator
 	module Strategy
 		module Algorithm
-			class ShortestQueueRouting < Base
+			class ShortestQueueRouting < Algorithm::Base
 				def initialize clients
 					super clients
 				end

@@ -1,7 +1,7 @@
 module Simulator
 	module Strategy
 		module Algorithm
-			class RoundRobinRouting < Base
+			class RoundRobinRouting < Algorithm::Base
 				def initialize clients
 					super clients
 					@last_elected = -1

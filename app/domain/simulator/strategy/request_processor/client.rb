@@ -2,7 +2,7 @@ module Simulator
 	module Strategy
 		module RequestProcessor
 
-			class Client < Base
+			class Client < RequestProcessor::Base
 				attr_accessor :processed_req
 				attr_reader :endtime, :current_request, :id
 				@@counter = 0

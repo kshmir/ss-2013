@@ -1,7 +1,7 @@
 module Simulator
 	module Strategy
 		module Algorithm
-			class SmartRouting < Base
+			class SmartRouting < Algorithm::Base
 				def initialize clients
 					super clients
 					@last_chosen = -1
