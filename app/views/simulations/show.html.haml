@@ -3,6 +3,6 @@
 		Simulando...
 	.progress.progress-striped.active
 		.bar{ :style => "width:#{@sim.percentage}%"}
-	= render(:partial => "animation")
 .js-simview.hidden
-	#myfirstchart{:style => "height: 500px;"}
+	/ #myfirstchart{:style => "height: 500px;"}
+	= render(:partial => "animation")

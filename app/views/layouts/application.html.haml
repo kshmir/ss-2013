@@ -30,17 +30,17 @@
 
     .container.main
       .row
-        .span3
-          .well.sidebar-nav
-            %h5 Proyecto de Simulación
-            %ul.nav.nav-list
-              - if content_for? :sidebar
-                = yield(:sidebar)
-              - else
-                %li.nav-header Alumnos:
-                %li Laurent Georget
-                %li Cristian Pereyra
-        .span9
+        / .span3
+        /   .well.sidebar-nav
+        /     %h5 Proyecto de Simulación
+        /     %ul.nav.nav-list
+        /       - if content_for? :sidebar
+        /         = yield(:sidebar)
+        /       - else
+        /         %li.nav-header Alumnos:
+        /         %li Laurent Georget
+        /         %li Cristian Pereyra
+        .span12
           = bootstrap_flash
           = yield
 
