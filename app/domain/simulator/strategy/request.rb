@@ -4,6 +4,7 @@ module Simulator
 			class Request
 				attr_accessor :enter_into_router_time, 
 											:enter_into_dyno_time,
+											:beginning_of_processing_time,
 											:exit_from_dyno_time,
 											:id
 

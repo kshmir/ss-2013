@@ -27,6 +27,7 @@ module Simulator
 						@cumu_idle_time += current_time - @start_idle_time
 						@endtime = current_time + @exit_time_generator.calculate
 						@current_request = req
+						@current_request.beginning_of_processing_time = current_time
 					else
 						@queue << req
 					end
@@ -42,6 +43,7 @@ module Simulator
 						@current_request = nil
 					else
 						@current_request = @queue.shift
+						@current_request.beginning_of_processing_time = @endtime
 						@endtime += @exit_time_generator.calculate
 					end
 					@endtime

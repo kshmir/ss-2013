@@ -35,7 +35,7 @@ module Simulator
 					end
 				end
 				@results[:req_stats] += req_stats.inject(0) do |mem,req|
-					mem += req.exit_from_dyno_time - req.enter_into_router_time
+					mem += req.beginning_of_processing_time - req.enter_into_router_time
 				end
 				req_stats
 			end

@@ -63,7 +63,7 @@ module Simulator
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
 				@next_arrival_time = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 150) 
-				@next_exit_time = input_variables[:next_exit_time] || (Simulator::Strategy::RandomVariable.new :rweibull, shape: 0.46, scale: 110.92)
+				@next_exit_time = input_variables[:next_exit_time] || (Simulator::Strategy::RandomVariable.new :rweibull, shape: 0.8, scale: 79.6)
 				@rejected_size = 0
 				@router = Simulator::Strategy::RequestProcessor::Router.new params
 				@clients_limit = input_variables[:clients_limit] || 10
