@@ -13,6 +13,10 @@ module Simulator
 				def is_queue_full?
 					@queue.length >= @queue_limit
 				end
+
+				def is_queue_empty?
+					@queue.length == 0
+				end
 			end
 
 		end

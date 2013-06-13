@@ -44,6 +44,7 @@ module Simulator
 
 			def terminate
 					finish_dyno_requests Float::INFINITY
+					stats = @stats_collector.collect_stats @t
 					@stats_collector.display_and_plot
 			end
 
@@ -61,7 +62,7 @@ module Simulator
 				@arrival_times = []
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
-				@next_arrival_time = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 1.0/150) 
+				@next_arrival_time = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 150) 
 				@next_exit_time = input_variables[:next_exit_time] || (Simulator::Strategy::RandomVariable.new :rweibull, shape: 0.46, scale: 110.92)
 				@rejected_size = 0
 				@router = Simulator::Strategy::RequestProcessor::Router.new params
@@ -75,9 +76,11 @@ module Simulator
 			def finish_dyno_requests arrival_time
 				loop do
 					next_dynos = next_dynos_for arrival_time
+					next_dynos.each do |dyno| 
+						@t = dyno.finish_request
+						dispatch_queue_at @t
+					end
 					break	if next_dynos.empty?
-					next_dynos.each { |dyno| @t = dyno.finish_request }
-					dispatch_queue_at @t
 				end
 			end
 
