@@ -37,13 +37,13 @@ group :assets do
 end
 
 group :development do
-	gem 'pry'
-	gem 'pry-rails'
-	gem 'pry-debugger'
-	gem 'pry-stack_explorer'
+	# gem 'pry'
+	# gem 'pry-rails'
+	# gem 'pry-debugger'
+	# gem 'pry-stack_explorer'
 
   gem 'yaml_db'                      # Provides rake db:data:dump and db:data:load for backups
-  gem 'awesome_print'                # Better console printing
+  # gem 'awesome_print'                # Better console printing
 
   gem 'better_errors'
 end

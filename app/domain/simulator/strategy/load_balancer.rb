@@ -39,7 +39,7 @@ module Simulator
 
 				stats = @stats_collector.collect_stats @t
 				@current_iteration = @current_iteration + 1
-				yield(@current_iteration, @max_amount_of_iterations, stats, elected_clients)
+				yield(@current_iteration, @max_amount_of_iterations, stats, elected_clients) if block_given?
 			end
 
 			def terminate
@@ -62,7 +62,7 @@ module Simulator
 				@arrival_times = []
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
-				@next_arrival_time = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 150) 
+				@next_arrival_time = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 1) 
 				@next_exit_time = input_variables[:next_exit_time] || (Simulator::Strategy::RandomVariable.new :rweibull, shape: 0.8, scale: 79.6)
 				@rejected_size = 0
 				@router = Simulator::Strategy::RequestProcessor::Router.new params

@@ -2,7 +2,7 @@ module Simulator
 	module Strategy
 		module RequestProcessor
 
-			class Router < Base
+			class Router < RequestProcessor::Base
 				def initialize params = {}
 					super params
 					@queue_limit ||= 1000
