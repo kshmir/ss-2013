@@ -4,14 +4,14 @@ module Simulator
 
 			class Client < Base
 				attr_accessor :processed_req
-				attr_reader :endtime, :current_request, :id, :cumulative_idle_time
+				attr_reader :endtime, :current_request, :id
 				@@counter = 0
 
 				def initialize params = {}
 					super params
 					@start_idle_time = 0
 					@idle = true
-					@cumulative_idle_time = 0
+					@cumu_idle_time = 0
 					@endtime = 0
 					@queue_limit ||= 100
 					@exit_time_generator = params[:exit_time_generator]
@@ -24,7 +24,7 @@ module Simulator
 					req.enter_into_dyno_time = current_time
 					if @idle
 						@idle = false
-						@cumulative_idle_time += current_time - @start_idle_time
+						@cumu_idle_time += current_time - @start_idle_time
 						@endtime = current_time + @exit_time_generator.calculate
 						@current_request = req
 					else
@@ -45,6 +45,10 @@ module Simulator
 						@endtime += @exit_time_generator.calculate
 					end
 					@endtime
+				end
+
+				def cumulative_idle_time t
+					idle? ? @cumu_idle_time + t - @start_idle_time : @cumu_idle_time
 				end
 
 				def idle?

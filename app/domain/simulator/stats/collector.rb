@@ -17,7 +17,7 @@ module Simulator
 
 			def collect_stats t
 				stats = { queue_size: @clients.map { |c| c.queue.size },
-								  idle_time:  @clients.map { |c| c.cumulative_idle_time } }
+								  idle_time:  @clients.map { |c| c.cumulative_idle_time t } }
 				@results[:clients_stats] << stats
 				stats[:req_stats] = collect_req_stats!
 #         @grapher.add t, stats[:queue_size]
