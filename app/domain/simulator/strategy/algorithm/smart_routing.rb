@@ -14,19 +14,12 @@ module Simulator
 					# return no dyno
 					# return nil if @clients.count { |dyno| dyno.queue.size == 0 } == 0
 					
-					index = @last_chosen
-					client = nil
-					loop do
-						index = (index + 1) % clients.length
-						client = @clients[index]
-						break if index == (@last_chosen + 1) % clients.length || client.idle?
-					end
-					if client.idle? 
-						@last_chosen = index
-					else
+					available_clients = @clients.reject { |dyno| !dyno.idle? }.shuffle
+					if available_clients.empty?
 						client = nil
+					else
+						client = available_clients[0]
 					end
-					client
 				end
 			end
 

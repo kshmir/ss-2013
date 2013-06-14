@@ -12,11 +12,13 @@ module Simulator
 				def compute
 					super
 				  client = nil
+					attempt = 0
 					loop do # Review this... it will be too slow
+						attempt += 1
 						client = @clients[@@fish_monger.rand(@clients.length)]
-						break if !client.is_queue_full?
+						break if !client.is_queue_full? || attempt > @clients.length * 3
 					end
-					client
+					client.is_queue_full? ? nil : client
 				end
 			end
 		end
