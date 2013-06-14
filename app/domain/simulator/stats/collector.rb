@@ -16,7 +16,8 @@ module Simulator
 			end
 
 			def collect_stats t
-				stats = { queue_size: @clients.map { |c| c.queue.size },
+				stats = { time: t,
+									queue_size: @clients.map { |c| c.queue.size },
 								  idle_time:  @clients.map { |c| c.cumulative_idle_time t } }
 				@results[:clients_stats] << stats
 				stats[:req_stats] = collect_req_stats!
@@ -31,11 +32,15 @@ module Simulator
 				@clients.each do |c|
 					until c.processed_req.empty? do
 						req = c.processed_req.shift
-						req_stats << req #req.exit_from_dyno_time - req.enter_into_router_time
+						stats = {}
+						[:enter_into_router_time, :enter_into_dyno_time, :beginning_of_processing_time, :exit_from_dyno_time].each do |time|
+							stats[time] = req.send time
+						end
+						req_stats << stats
 					end
 				end
 				@results[:req_stats] += req_stats.inject(0) do |mem,req|
-					mem += req.beginning_of_processing_time - req.enter_into_router_time
+					mem += req[:beginning_of_processing_time] - req[:enter_into_router_time]
 				end
 				req_stats
 			end
