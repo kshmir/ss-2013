@@ -6,7 +6,7 @@ module Simulator
 				strategy.step &block
 				# strategy.after_step
 			end
-			strategy.terminate
+		  stats =	strategy.terminate
 		end
 	end
 end

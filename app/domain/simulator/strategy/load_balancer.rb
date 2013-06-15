@@ -23,29 +23,44 @@ module Simulator
 			end
 
 			def step
-				interarrival_time = @next_arrival_time.calculate
-				next_arrival = @t + interarrival_time
-				finish_dyno_requests next_arrival
-				@t = next_arrival
-				req = Request.new @t
-				elected_clients = []
-				if not @router.is_queue_full?
-					@router.queue << req
-					@accepted += 1
-					elected_clients = dispatch_queue
+				dyno_to_consider = get_dyno_by_next_exit_time
+
+				if !dyno_to_consider.nil? && dyno_to_consider.endtime < @next_arrival_time
+					@t = dyno_to_consider.endtime
+					req = dyno_to_consider.finish_request
+					@stats_collector.collect_req_stats req
+					dispatch_queue
 				else
-					@rejected += 1
+					@t = @next_arrival_time
+					req = Request.new @t
+					if not @router.is_queue_full?
+						@router.queue << req
+						@accepted += 1
+						dispatch_queue
+					else
+						@rejected += 1
+					end
+					interarrival_time = @next_arrival.calculate
+					@next_arrival_time = @t + interarrival_time
+					@current_iteration = @current_iteration + 1
 				end
 
 				stats = @stats_collector.collect_stats @t
-				@current_iteration = @current_iteration + 1
-				yield(@current_iteration, @max_amount_of_iterations, stats, elected_clients) if block_given?
+				# TODO: fix last argument
+				yield(@current_iteration, @max_amount_of_iterations, stats, []) if block_given?
 			end
 
 			def terminate
-					finish_dyno_requests Float::INFINITY
+				@next_arrival_time = Float::INFINITY
+				loop do
+					req = get_dyno_by_next_exit_time.finish_request
+					dispatch_queue
+					@stats_collector.collect_req_stats req
 					stats = @stats_collector.collect_stats @t
-					@stats_collector.display_and_plot
+					break if @clients.all? { |dyno| dyno.idle? }
+				end
+#         @stats_collector.display_and_plot
+				@stats_collector.results
 			end
 
 			def self.with_algorithm algorithm, params = {}
@@ -57,41 +72,28 @@ module Simulator
 			private
 			def init
 				@t = 0
+				@next_arrival_time = 0
+				@next_exit_time = Float::INFINITY
+
 				@accepted = 0
 				@rejected = 0
+
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
-				@next_arrival_time = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 150) 
-				@next_exit_time = input_variables[:next_exit_time] || (Simulator::Strategy::RandomVariable.new :rweibull, {shape: 0.46, scale: 111}, 10, 30000)
+
+				@next_arrival = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 6.667) 
+				@next_exit = input_variables[:next_exit_time] || (Simulator::Strategy::RandomVariable.new :rweibull, {shape: 0.46, scale: 111}, 10, 30000)
 				@router = Simulator::Strategy::RequestProcessor::Router.new params
 				@clients_limit = input_variables[:clients_limit] || 10
-				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit_time}) )}
+				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit}) )}
 				@algorithm = control_functions[:algorithm].send :new, @clients
 				@stats_collector = Simulator::Stats::Collector.new @clients
 			end
 
 
-			def finish_dyno_requests arrival_time
-				loop do
-					next_dynos = next_dynos_for arrival_time
-					until next_dynos.empty?
-						dyno = next_dynos[0]
-						@t = dyno.endtime
-						if @t > arrival_time 
-							binding.pry
-						end
-						dyno.finish_request
-						dispatch_queue
-						next_dynos = next_dynos_for arrival_time
-					end
-					break	if next_dynos.empty?
-				end
-			end
-
-			def next_dynos_for arrival_time
+			def get_dyno_by_next_exit_time
 				@clients.reject { |dyno| dyno.idle? }
-								.select { |dyno| dyno.endtime < arrival_time }
-				        .sort! { |dyno1,dyno2| dyno1.endtime <=> dyno2.endtime }
+								.min_by { |dyno| dyno.endtime }
 			end
 
 			def dispatch_queue
