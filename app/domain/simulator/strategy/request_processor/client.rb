@@ -38,11 +38,11 @@ module Simulator
 					req = @current_request
 					if @queue.empty?
 						@idle = true
-						@start_idle_time = new_current_time
+						@start_idle_time = @endtime
 						@current_request = nil
 					else
 						@current_request = @queue.shift
-						@current_request.beginning_of_processing_time = new_current_time
+						@current_request.beginning_of_processing_time = @endtime
 						@endtime += @exit_time_generator.calculate
 					end
 					req

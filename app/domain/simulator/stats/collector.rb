@@ -6,7 +6,7 @@ module Simulator
 
 			def initialize clients
 				@clients = clients
-				@results = {clients_stats: [], req_stats: 0}
+				@results = {clients_stats: [], consolidated_stats: { total_queueing_time: 0, req_queued: 0 } }
 				@grapher = Simulator::Stats::Grapher.new @clients.size, @clients.map { |c| "dyno #{c.id}" }
 			end
 
@@ -28,7 +28,8 @@ module Simulator
 				[:enter_into_router_time, :enter_into_dyno_time, :beginning_of_processing_time, :exit_from_dyno_time].each do |time|
 					stats[time] = req.send time
 				end
-				@results[:req_stats] += req.beginning_of_processing_time - req.enter_into_router_time
+				@results[:consolidated_stats][:total_queueing_time] += req.beginning_of_processing_time - req.enter_into_router_time
+				@results[:consolidated_stats][:req_queued] += 1 if req.enter_into_router_time != req.beginning_of_processing_time
 				stats
 			end
 
