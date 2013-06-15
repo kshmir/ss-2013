@@ -17,7 +17,6 @@ module Simulator
 					@exit_time_generator = params[:exit_time_generator]
 					@id = @@counter
 					@@counter += 1
-					@processed_req = []
 				end
 
 				def enqueue_request current_time, req
@@ -36,7 +35,7 @@ module Simulator
 				def finish_request 
 					#@endtime is the current_time when this function is called
 					@current_request.exit_from_dyno_time = @endtime 
-					@processed_req << @current_request
+					req = @current_request
 					if @queue.empty?
 						@idle = true
 						@start_idle_time = @endtime
@@ -46,7 +45,7 @@ module Simulator
 						@current_request.beginning_of_processing_time = @endtime
 						@endtime += @exit_time_generator.calculate
 					end
-					@endtime
+					req
 				end
 
 				def cumulative_idle_time t
