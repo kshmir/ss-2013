@@ -1,0 +1,13 @@
+(40..55).each do |n|
+  params[:input_variables] = {clients_limit: n, max_amount_of_iterations: 10000};
+  resultados[n] = {queueing_time: 0, req_queued: 0}
+  20.times do 
+    s = Simulator::Strategy::LoadBalancer.with_algorithm Simulator::Strategy::Algorithm::SmartRouting, params;
+    stats = Simulator::Core.simulate s do || end
+    resultados[n][:queueing_time] += stats[:total_queueing_time] / 10000
+    resultados[n][:req_queued] += stats[:req_queued]
+  end
+  resultados[n][:queueing_time] /= 20
+  resultados[n][:req_queued] /= 20
+end
+

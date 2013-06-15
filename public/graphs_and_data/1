@@ -1,0 +1,14 @@
+ Rails.application.eager_load!
+params = {};  params[:input_variables] = {clients_limit: 30, max_amount_of_iterations: 10000};
+
+s = Simulator::Strategy::LoadBalancer.with_algorithm Simulator::Strategy::Algorithm::RandomRouting, params
+Simulator::Core.simulate s do || end
+
+s = Simulator::Strategy::LoadBalancer.with_algorithm Simulator::Strategy::Algorithm::RoundRobinRouting, params
+Simulator::Core.simulate s do || end
+
+s = Simulator::Strategy::LoadBalancer.with_algorithm Simulator::Strategy::Algorithm::ShortestQueueRouting, params
+Simulator::Core.simulate s do || end
+
+s = Simulator::Strategy::LoadBalancer.with_algorithm Simulator::Strategy::Algorithm::SmartRouting, params
+Simulator::Core.simulate s do || end
