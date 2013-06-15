@@ -35,18 +35,18 @@ module Simulator
 
 				def finish_request 
 					#@endtime is the current_time when this function is called
-					@current_request.exit_from_dyno_time = @endtime 
+					new_current_time = @endtime
+					@current_request.exit_from_dyno_time = new_current_time
 					@processed_req << @current_request
 					if @queue.empty?
 						@idle = true
-						@start_idle_time = @endtime
+						@start_idle_time = new_current_time
 						@current_request = nil
 					else
 						@current_request = @queue.shift
-						@current_request.beginning_of_processing_time = @endtime
+						@current_request.beginning_of_processing_time = new_current_time
 						@endtime += @exit_time_generator.calculate
 					end
-					@endtime
 				end
 
 				def cumulative_idle_time t

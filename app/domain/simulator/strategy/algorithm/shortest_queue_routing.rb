@@ -8,10 +8,7 @@ module Simulator
 
 				def compute
 					super
-					# would it be useful to do a shuffle
-					# to ensure not using always the same
-					# minimum ?
-					client = @clients.min_by { |dyno| dyno.queue.size }
+					client = @clients.shuffle.min_by { |dyno| dyno.queue.size }
 					client.is_queue_full? ? nil : client
 				end
 			end

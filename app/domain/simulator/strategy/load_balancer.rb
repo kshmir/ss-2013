@@ -25,14 +25,14 @@ module Simulator
 			def step
 				interarrival_time = @next_arrival_time.calculate
 				next_arrival = @t + interarrival_time
-				finish_dyno_requests(next_arrival)
+				finish_dyno_requests next_arrival
 				@t = next_arrival
 				req = Request.new @t
 				elected_clients = []
 				if not @router.is_queue_full?
 					@router.queue << req
 					@accepted += 1
-					elected_clients = dispatch_queue_at @t
+					elected_clients = dispatch_queue
 				else
 					@rejected += 1
 				end
@@ -59,12 +59,10 @@ module Simulator
 				@t = 0
 				@accepted = 0
 				@rejected = 0
-				@arrival_times = []
 				@current_iteration = 0
 				@max_amount_of_iterations = input_variables[:max_amount_of_iterations] || 100
 				@next_arrival_time = input_variables[:next_arrival_time] || (Simulator::Strategy::RandomVariable.new :rpois, lambda: 150) 
 				@next_exit_time = input_variables[:next_exit_time] || (Simulator::Strategy::RandomVariable.new :rweibull, {shape: 0.46, scale: 111}, 10, 30000)
-				@rejected_size = 0
 				@router = Simulator::Strategy::RequestProcessor::Router.new params
 				@clients_limit = input_variables[:clients_limit] || 10
 				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit_time}) )}
@@ -76,9 +74,15 @@ module Simulator
 			def finish_dyno_requests arrival_time
 				loop do
 					next_dynos = next_dynos_for arrival_time
-					next_dynos.each do |dyno| 
-						@t = dyno.finish_request
-						dispatch_queue_at @t
+					until next_dynos.empty?
+						dyno = next_dynos[0]
+						@t = dyno.endtime
+						if @t > arrival_time 
+							binding.pry
+						end
+						dyno.finish_request
+						dispatch_queue
+						next_dynos = next_dynos_for arrival_time
 					end
 					break	if next_dynos.empty?
 				end
@@ -90,13 +94,13 @@ module Simulator
 				        .sort! { |dyno1,dyno2| dyno1.endtime <=> dyno2.endtime }
 			end
 
-			def dispatch_queue_at time
+			def dispatch_queue
 				elected_clients = []
 				loop do
 					dyno = @algorithm.compute
 					break if @router.queue.size <= 0 || dyno.nil?
 					req = @router.queue.shift
-					dyno.enqueue_request time, req
+					dyno.enqueue_request @t, req
 					elected_clients << dyno.id
 				end
 				elected_clients

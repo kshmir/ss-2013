@@ -32,7 +32,7 @@ module Simulator
 				@clients.each do |c|
 					until c.processed_req.empty? do
 						req = c.processed_req.shift
-						stats = {}
+						stats = {id: req.id}
 						[:enter_into_router_time, :enter_into_dyno_time, :beginning_of_processing_time, :exit_from_dyno_time].each do |time|
 							stats[time] = req.send time
 						end

@@ -14,7 +14,7 @@ module Simulator
 					# return no dyno
 					# return nil if @clients.count { |dyno| dyno.queue.size == 0 } == 0
 					
-					available_clients = @clients.reject { |dyno| !dyno.idle? }.shuffle
+					available_clients = @clients.select { |dyno| dyno.idle? }.shuffle
 					if available_clients.empty?
 						client = nil
 					else
