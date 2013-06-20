@@ -12,6 +12,7 @@ module SimWorker
       @sim.percentage = (i * 1.0 / n) * 100
       @sim.content = {stats: []} unless @sim.content
       @sim.content[:stats] = stats
+      puts @sim.percentage
       @sim.save
     end
   end
