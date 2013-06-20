@@ -3,9 +3,9 @@ module SimWorker
   def self.perform(sim_id)
   	@sim = Simulation.find(sim_id)
 		params = {}
-    params[:input_variables] = { clients_limit: 25,
-                                 max_amount_of_iterations: 10 }
-    algorithm =     Simulator::Strategy::Algorithm::RandomRouting
+    params[:input_variables] = { clients_limit: 10,
+                                 max_amount_of_iterations: 1000 }
+    algorithm =     Simulator::Strategy::Algorithm::SmartRouting
   	load_balancer = Simulator::Strategy::LoadBalancer.with_algorithm algorithm, params
     data = []
   	Simulator::Core.simulate load_balancer do |i, n, stats|

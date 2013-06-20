@@ -47,7 +47,11 @@ function createAnimation(id)
     timelines[id]  = new TimelineLite();
 
     if (!global_timeline) {
-        global_timeline = new TimelineLite({paused: true});
+        global_timeline = new TimelineLite({paused: true,
+            onUpdate: function() {
+                $("#timeline_slider").slider("value", global_timeline.progress() * 100)
+            }
+        });
         global_timeline.timeScale(0.1);
         global_timeline.autoRemoveChildren = true;
         global_timeline.smoothChildTiming = true;
@@ -83,7 +87,7 @@ function anim_fromRouterToDyno(id_ball, i, delay, stay_time)
 
     tl.call(function() 
     {
-    queue[i].size++ ; 
+    queue[i].size += (tl.reversed()) ? -1 : 1; 
     queue[i].text.text(queue[i].size);
     }, [], this);
     tl.add( TweenMax.to(ball.obj, stay_time, {bezier: {
@@ -113,7 +117,7 @@ function anim_leaveDyno(id_ball, i, delay)
 
     tl.call(function() 
         {
-        queue[i].size-- ; 
+        queue[i].size += (tl.reversed()) ? 1 : -1; 
         queue[i].text.text(queue[i].size);
         }, [], this);
 

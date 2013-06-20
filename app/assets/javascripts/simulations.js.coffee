@@ -6,13 +6,23 @@
 
 control =
     init: ()->
-	$("#timeline_slider").slider({ min: 0, max: 1 })
+	$("#speed_slider").slider 
+        min: 0.01
+        max: 2
+        step: 0.001
+        slide: (event, ui)->
+            if (ui.value > 0)
+                document.global_timeline.timeScale(ui.value)
+    $("#timeline_slider").slider 
+        min: 0
+        max: 100
+        step: 0.1
+        slide: (event, ui)->
+            document.global_timeline.progress(ui.value / 100.0)
 	$("#start_btn").on "click", ()->
 	    document.global_timeline.resume()
 	$("#pause_btn").on "click", ()->
 	    document.global_timeline.pause()
-	$("#timeline_slider").on "change", (event,ui)->
-	    document.global_timeline.progress($("#timeline_slider").value)
 
 
 simulator = 
