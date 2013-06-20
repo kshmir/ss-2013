@@ -1,0 +1,118 @@
+html {
+  -webkit-transform: translate3d(0,0,0);
+  -moz-transform: translate3d(0,0,0);
+  -ms-transform: translate3d(0,0,0);
+  -o-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+  -webkit-backface-visibility: hidden;
+  -webkit-perspective: 1000;
+}
+
+div#playground 
+{
+    width: 100%;
+    height: 400px;
+    margin-top: 20px;
+}
+
+$ballColor: rgba(200,0,0,0.5);
+
+.ball
+{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-color: $ballColor;
+    border-radius: 50px;
+    box-shadow: 0 0 5px $ballColor;
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, lighten($ballColor, 50%)), color-stop(0.5, lighten($ballColor, 20%)), to($ballColor));
+}
+
+.queues {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 30px;
+}
+
+$queueColor: #4fa037;
+
+.queue
+{
+    border: 1px solid darken($queueColor, 5%);
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    display: inline-block;
+    margin-top: 10px;
+    margin-left: 10px;
+    z-index: 100;
+    background-color: $queueColor;
+    box-shadow: inset 0 0 15px darken($queueColor, 15%);
+    color: lighten($queueColor, 50%);
+    text-align: center;
+}
+
+.queue p
+{
+    display:inline-block;   
+    text-align:center;
+    margin: auto;
+    margin-top: 10px;
+}
+
+$routerColor: black;
+
+.router
+{
+    border-radius: 8px;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    background: -moz-linear-gradient(top, lighten($routerColor, 20%), lighten($routerColor, 4%) 50%, lighten($routerColor, 1%) 51%, $routerColor);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, lighten($routerColor, 30%)), color-stop(.5, lighten($routerColor, 20%)), color-stop(.51, lighten($routerColor, 20%)), to($routerColor));
+    background-color: $routerColor;
+    border-bottom: solid 2px #111;
+    border-top: solid 2px #555;
+    box-shadow: inset 0 0 15px $routerColor;
+    -moz-box-shadow: inset 0 0 15px $routerColor;
+    text-align: center;
+    -webkit-box-shadow: inset 0 0 15px $routerColor;
+    width: 250px;
+}
+
+.router p {
+    font-size: 16px;
+    color: white;
+    display:inline-block;   
+    text-align:center;
+    margin: auto;
+    margin-top: 16px;
+}
+
+$internetColor: lighten(#66ccff, 10%);
+
+.internet {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 100%;
+    height: 100px;
+    color: white;
+    line-height: 100px;
+    text-shadow: 1px 1px 0 #eee;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+
+
+
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, darken($internetColor, 30%)), color-stop(.3, darken($internetColor, 20%)), color-stop(.5, darken($internetColor, 15%)), to($internetColor));
+    background-color: $internetColor;
+
+    box-shadow: inset 0 0 30px $internetColor;
+    -moz-box-shadow: inset 0 0 30px $internetColor;
+    text-align: center;
+    -webkit-box-shadow: inset 0 0 30px $internetColor;
+}
