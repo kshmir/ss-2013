@@ -37,7 +37,7 @@ function createAnimation(id)
 {
     var ball = {obj: $('<div id="ball_' + id + '" class="ball"></div>'), 
 		spot: -1};
-    debugger;
+
     ball.obj.css("top",router.offset().top + 15);
     ball.obj.css("left",router.offset().left + 15);
     playground.append(ball.obj);
@@ -57,7 +57,7 @@ function anim_fromRouterToDyno(id_ball, i)
     var tl = timelines[id_ball];
     var ball = balls[id_ball];
 
-    ball.spot = j;
+    ball.spot = i;
     queue[i].size++;
     queue[i].text.text(queue[i].size);
 
@@ -74,8 +74,8 @@ function anim_fromRouterToDyno(id_ball, i)
     }}));
     tl.call(function() 
 	    {
-		queue[dyno].size-- ; 
-		queue[dyno].text.text(queue[dyno].size);
+		queue[i].size-- ; 
+		queue[i].text.text(queue[i].size);
 	    }, [], this, "+=3");
 }
 
