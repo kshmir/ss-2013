@@ -29,13 +29,20 @@ simulator =
         animation: ()->
             id = $(".js-simulation").attr "data-id"
             $.getJSON "/simulations/#{id}.json",(data)->
+                anims = {}
                 if (data.content)
                     for stat in data.content.stats
                         if (stat.event.event_type == "routing")
-                            createAnimation(stat.event.req)
-                            anim_fromRouterToDyno(stat.event.req, stat.event.dyno, stat.time  / 5.0 )
-                            launch_animation(stat.event.req)
+                            anims[stat.event.req] = {}
+                            anims[stat.event.req].dyno = stat.event.dyno;
+                            anims[stat.event.req].start_time = stat.time / 100;
                         else if (stat.event.event_type == "exit")
-                            anim_leaveDyno(stat.event.req, stat.event.dyno, stat.time / 5.0 )
+                            anims[stat.event.req].end_time = stat.time / 100;
+                            anims[stat.event.req].total_time = anims[stat.event.req].end_time - anims[stat.event.req].start_time;
+                    for req, event of anims
+                        createAnimation(req)
+                        anim_fromRouterToDyno(req, event.dyno, event.start_time, event.total_time)
+                        launch_animation(req)
+                        anim_leaveDyno(req, event.dyno)       
 
 simulator.init()

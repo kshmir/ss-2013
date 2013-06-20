@@ -25,8 +25,9 @@ $ballColor: rgba(200,0,0,0.5);
     background-color: $ballColor;
     border-radius: 50px;
     box-shadow: 0 0 5px $ballColor;
-
+    z-index: 0;
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0, lighten($ballColor, 50%)), color-stop(0.5, lighten($ballColor, 20%)), to($ballColor));
+    opacity: 0;
 }
 
 .queues {
@@ -48,7 +49,7 @@ $queueColor: #4fa037;
     display: inline-block;
     margin-top: 10px;
     margin-left: 10px;
-    z-index: 100;
+    z-index: 10000;
     background-color: $queueColor;
     box-shadow: inset 0 0 15px darken($queueColor, 15%);
     color: lighten($queueColor, 50%);

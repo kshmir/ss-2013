@@ -7,6 +7,8 @@ var internet;
 var N;
 var timelines = {};
 var balls = {};
+var global_timeline = undefined;
+
 
 function setup(numberOfQueues)
 {
@@ -49,9 +51,14 @@ function createAnimation(id)
 function launch_animation(id_ball)
 {
     timelines[id_ball].resume();
+    if (!global_timeline) {
+        global_timeline = new TimelineLite();
+        global_timeline.timeScale(0.1);
+    }
+    global_timeline.add(timelines[id_ball], { position: 0 });
 }
 
-function anim_fromRouterToDyno(id_ball, i, delay)
+function anim_fromRouterToDyno(id_ball, i, delay, stay_time)
 {
     var spot_found = false;
     var tl = timelines[id_ball];
@@ -59,22 +66,33 @@ function anim_fromRouterToDyno(id_ball, i, delay)
 
     ball.spot = i;
 
+
+    TweenMax.defaultOverwrite = "all";
     var dX = queue[i].obj.offset().left-router.offset().left - 5; 
     var dY = queue[i].obj.offset().top-router.offset().top - 25;
-
-    tl.add( TweenMax.to(ball.obj, 2, {bezier: {
+    tl.add( TweenMax.to(ball.obj, 0.01, { opacity:1, delay: delay }));
+    tl.add( TweenMax.to(ball.obj, 0.5, {bezier: {
 	type: "soft",
-	values: [{x:dX, y:dY}, 
-		 {x:dX, y:dY + 10}, 
-         {x:dX, y:dY + 20 }],
+	values: [{x:dX, y:dY + 20}, 
+		 {x:dX, y:dY + 20}]
 		 // {x:dX, y:280 - ball.spot*22 }],
-	autoRotate: true
-    },delay: delay * 0.1}));
+    }
+    , opacity: 0
+    }));
+
+    
+
     tl.call(function() 
-	    {
-		queue[i].size++ ; 
-		queue[i].text.text(queue[i].size);
-	    }, [], this, delay);
+    {
+    queue[i].size++ ; 
+    queue[i].text.text(queue[i].size);
+    }, [], this);
+    tl.add( TweenMax.to(ball.obj, stay_time, {bezier: {
+    type: "soft",
+    values: [{x:dX, y:dY + 20}, 
+         {x:dX, y:dY + 20}]
+         // {x:dX, y:280 - ball.spot*22 }],
+    }}));
 }
 
 function anim_fromRouterToExit(id_ball, delay)
@@ -83,8 +101,7 @@ function anim_fromRouterToExit(id_ball, delay)
     var ball = balls[id_ball];
     tl.add( TweenMax.to(ball.obj, 2, {bezier: {
 	type: "soft",
-	values: [{x:0, y:0}, {x:400, y:0}, {x:450, y:150}, {x:450, y:200}],
-	autoRotate: true,
+	values: [{x:0, y:0}, {x:400, y:0}, {x:450, y:150}, {x:450, y:200}]
     }, delay: delay * 0.8}));
 }
 
@@ -95,26 +112,27 @@ function anim_leaveDyno(id_ball, i, delay)
     var dX = ball.obj.offset().left-router.offset().left - 5 + Math.random()*internet.width()/2 - internet.width()/4; 
     var dY = internet.offset().top - ball.obj.offset().top + Math.random()*(internet.height()-ball.obj.height());
 
-    tl.add(TweenMax.to(ball.obj, 3, 
+    tl.call(function() 
+        {
+        queue[i].size-- ; 
+        queue[i].text.text(queue[i].size);
+        }, [], this);
+
+    tl.add(TweenMax.to(ball.obj, 0.5, 
 	   {bezier: {
 	       type: "soft",
 	       values: [
                     {x:dX, y:dY},
                     {x:dX, y:dY}
-                   ],
-	       autoRotate: true
-	   }, delay: delay * 0.05}));
-    tl.call(function() 
-	    {
-		queue[i].size-- ; 
-		queue[i].text.text(queue[i].size);
-	    }, [], this, delay);
+                   ]
+	   }, opacity: 1
+    }));
+    
 
-    tl.add(TweenLite.to(ball.obj, 5,
+    tl.add(TweenLite.to(ball.obj, 1,
 	   {css: {
 	       opacity: "0"
-	   }, delay: delay * 0.05}));
-    tl.call(function() { ball.obj.remove(); });
+	   }}));
 }
 
 
