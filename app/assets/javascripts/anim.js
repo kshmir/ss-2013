@@ -78,8 +78,9 @@ function anim_fromRouterToDyno(id_ball, i, delay, stay_time)
     }
     , opacity: 0
     }));
-
-    
+    tl.add(TweenMax.to(queue[i].obj, 0.1, {css: {
+         backgroundColor: "#FF0000"
+    }}),"-=0.2");
 
     tl.call(function() 
     {
@@ -126,6 +127,9 @@ function anim_leaveDyno(id_ball, i, delay)
                    ]
 	   }, opacity: 1
     }));
+    tl.add(TweenMax.to(queue[i].obj, 0.1, {css: {
+         backgroundColor: "rgb(79, 160, 55)"
+    }}));
     
 
     tl.add(TweenLite.to(ball.obj, 1,
