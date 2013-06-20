@@ -22,7 +22,6 @@ function setup(numberOfQueues)
     for (var i=0 ; i<numberOfQueues ; i++)
     {
 	    queue[i] = {
-            spots: [0,0,0,0],
 	        obj: $('<div class="queue"/>'),
 	        text: $('<p>0</p>'),
 	        size: 0
@@ -58,15 +57,7 @@ function anim_fromRouterToDyno(id_ball, i)
     var tl = timelines[id_ball];
     var ball = balls[id_ball];
 
-    for (var j=0 ; j<queue[i].spots.length && !spot_found ; j++)
-    {
-        if (queue[i].spots[j] == 0)
-        {
-            ball.spot = j;
-            queue[i].spots[j] = 1;
-            spot_found = true;
-        }
-    }
+    ball.spot = j;
     queue[i].size++;
     queue[i].text.text(queue[i].size);
 
@@ -84,10 +75,8 @@ function anim_fromRouterToDyno(id_ball, i)
     tl.call(function() 
 	    {
 		queue[dyno].size-- ; 
-		queue[dyno].spots[ball.spot]=0; 
 		queue[dyno].text.text(queue[dyno].size);
 	    }, [], this, "+=3");
-    tl.pause();
 }
 
 function anim_fromRouterToExit(id_ball)
@@ -99,7 +88,6 @@ function anim_fromRouterToExit(id_ball)
 	values: [{x:0, y:0}, {x:400, y:0}, {x:450, y:150}, {x:450, y:200}],
 	autoRotate: true
     }}));
-    tl.pause();
 }
 
 function anim_leaveDyno(id_ball, i)
@@ -124,7 +112,6 @@ function anim_leaveDyno(id_ball, i)
 	       opacity: "0"
 	   }}));
     tl.call(function() { ball.obj.remove(); });
-    tl.pause();
 }
 
 
