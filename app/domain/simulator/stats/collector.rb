@@ -15,10 +15,10 @@ module Simulator
 #         @grapher.plot
 			end
 
-			def collect_stats t
-				stats = { time: t,
-									queue_size: @clients.map { |c| c.queue.size },
-								  idle_time:  @clients.map { |c| c.cumulative_idle_time t } }
+			def collect_stats t, stats
+				stats.merge! ({ time: t,
+											 queue_size: @clients.map { |c| c.queue.size },
+											 idle_time:  @clients.map { |c| c.cumulative_idle_time t } })
 				@results[:clients_stats] << stats
 				stats
 			end

@@ -48,7 +48,7 @@ module Simulator
 					stats = { event_type: :exit }
 				end
 
-				stats.merge! @stats_collector.collect_stats @t
+				@stats_collector.collect_stats @t, stats
 				yield(@current_iteration, @max_amount_of_iterations, stats, req) if block_given?
 			end
 
@@ -57,7 +57,8 @@ module Simulator
 				loop do
 					req = get_dyno_by_next_exit_time.finish_request
 					dispatch_queue
-					stats = { event_type: :exit}.merge (@stats_collector.collect_stats @t)
+					stats = { event_type: :exit}
+					@stats_collector.collect_stats @t, stats
 					break if @clients.all? { |dyno| dyno.idle? }
 				end
 #         @stats_collector.display_and_plot
