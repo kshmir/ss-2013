@@ -51,7 +51,7 @@ function launch_animation(id_ball)
     timelines[id_ball].resume();
 }
 
-function anim_fromRouterToDyno(id_ball, i)
+function anim_fromRouterToDyno(id_ball, i, delay)
 {
     var spot_found = false;
     var tl = timelines[id_ball];
@@ -71,7 +71,7 @@ function anim_fromRouterToDyno(id_ball, i)
          {x:dX, y:dY + 20 }],
 		 // {x:dX, y:280 - ball.spot*22 }],
 	autoRotate: true
-    }}));
+    },delay: delay}));
     tl.call(function() 
 	    {
 		queue[i].size-- ; 
@@ -79,18 +79,18 @@ function anim_fromRouterToDyno(id_ball, i)
 	    }, [], this, "+=3");
 }
 
-function anim_fromRouterToExit(id_ball)
+function anim_fromRouterToExit(id_ball, delay)
 {
     var tl = timelines[id_ball];
     var ball = balls[id_ball];
     tl.add( TweenMax.to(ball.obj, 2, {bezier: {
 	type: "soft",
 	values: [{x:0, y:0}, {x:400, y:0}, {x:450, y:150}, {x:450, y:200}],
-	autoRotate: true
-    }}));
+	autoRotate: true,
+    }, delay: delay}));
 }
 
-function anim_leaveDyno(id_ball, i)
+function anim_leaveDyno(id_ball, i, delay)
 {
     var tl = timelines[id_ball];
     var ball = balls[id_ball];
@@ -105,12 +105,12 @@ function anim_leaveDyno(id_ball, i)
                     {x:dX, y:dY}
                    ],
 	       autoRotate: true
-	   }}));
+	   }, delay: delay}));
 
     tl.add(TweenLite.to(ball.obj, 5,
 	   {css: {
 	       opacity: "0"
-	   }}));
+	   }, delay: delay}));
     tl.call(function() { ball.obj.remove(); });
 }
 
