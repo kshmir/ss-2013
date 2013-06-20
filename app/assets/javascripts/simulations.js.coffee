@@ -28,8 +28,8 @@ simulator =
 			id = $(".js-simulation").attr "data-id"
 			$.getJSON("/simulations/#{id}.json",(data)->
 				$(".js-simulation").removeClass("hidden")
-				if data.content
-				    createAnimation(dyno) for dyno in data.content.current_clients
+				# if data.content
+				#     createAnimation(dyno) for dyno in data.content.current_clients
 				simulator.percentage = perc = data.percentage
 				$(".bar").css("width", "#{perc}%")
 				if (parseInt(perc) < 100.0)
