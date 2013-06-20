@@ -57,8 +57,7 @@ module Simulator
 				loop do
 					req = get_dyno_by_next_exit_time.finish_request
 					dispatch_queue
-					@stats_collector.collect_req_stats req
-					stats = @stats_collector.collect_stats @t
+					stats = { event_type: :exit}.merge (@stats_collector.collect_stats @t)
 					break if @clients.all? { |dyno| dyno.idle? }
 				end
 #         @stats_collector.display_and_plot
