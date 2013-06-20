@@ -5,6 +5,8 @@ var orig;
 var router;
 var internet;
 var N;
+var timelines = {};
+var balls = {};
 
 function setup(numberOfQueues)
 {
@@ -32,55 +34,30 @@ function setup(numberOfQueues)
 }
 
 
-function createAnimation(dyno) 
+function createAnimation(id) 
 {
-    var ball = {obj: $('<div class="ball"></div>'), 
+    var ball = {obj: $('<div id="ball_' + id + '" class="ball"></div>'), 
 		spot: -1};
+    debugger;
     ball.obj.css("top",router.offset().top + 15);
     ball.obj.css("left",router.offset().left + 15);
     playground.append(ball.obj);
 
-//random routing
-//var dyno = Math.floor(Math.random()*5+1)-1;
-
-//pseudo-smart routing
-//    var dyno = -1;
-//    for (var i = 0, tried = Math.floor(Math.random()*N); i < N && dyno == -1 ; i++)
-//    {
-//        if (queue[tried].size < queue[tried].spots.length)
-//        {
-//	    dyno = tried;
-//        }
-//        else
-//        {
-//	    tried = (tried + 1) % N;
-//        }
-//    }
-//
-    var tl = new TimelineLite();
-    if (dyno == -1 || queue[dyno].size>=queue[dyno].spots.length)
-    {
-	anim_fromRouterToExit(tl, ball);
-    }
-    else
-    {
-	anim_fromRouterToDyno(tl, ball, dyno);
-        tl.call(function() 
-		{
-		    queue[dyno].size-- ; 
-		    queue[dyno].spots[ball.spot]=0; 
-		    queue[dyno].text.text(queue[dyno].size);
-		}, [], this, "+=3");
-	anim_leaveDyno(tl, ball, dyno);
-    }
-    tl.call(function() { ball.obj.remove(); });
-
-    tl.resume();
+    balls[id] = ball;
+    timelines[id]  = new TimelineLite();
 }
 
-function anim_fromRouterToDyno(tl, ball, i)
+function launch_animation(id_ball)
+{
+    timelines[id_ball].resume();
+}
+
+function anim_fromRouterToDyno(id_ball, i)
 {
     var spot_found = false;
+    var tl = timelines[id_ball];
+    var ball = balls[id_ball];
+
     for (var j=0 ; j<queue[i].spots.length && !spot_found ; j++)
     {
         if (queue[i].spots[j] == 0)
@@ -104,20 +81,31 @@ function anim_fromRouterToDyno(tl, ball, i)
 		 // {x:dX, y:280 - ball.spot*22 }],
 	autoRotate: true
     }}));
+    tl.call(function() 
+	    {
+		queue[dyno].size-- ; 
+		queue[dyno].spots[ball.spot]=0; 
+		queue[dyno].text.text(queue[dyno].size);
+	    }, [], this, "+=3");
+    tl.pause();
 }
 
-function anim_fromRouterToExit(tl, ball)
+function anim_fromRouterToExit(id_ball)
 {
+    var tl = timelines[id_ball];
+    var ball = balls[id_ball];
     tl.add( TweenMax.to(ball.obj, 2, {bezier: {
 	type: "soft",
 	values: [{x:0, y:0}, {x:400, y:0}, {x:450, y:150}, {x:450, y:200}],
 	autoRotate: true
     }}));
+    tl.pause();
 }
 
-function anim_leaveDyno(tl, ball, i)
+function anim_leaveDyno(id_ball, i)
 {
-    debugger;
+    var tl = timelines[id_ball];
+    var ball = balls[id_ball];
     var dX = ball.obj.offset().left-router.offset().left - 5 + Math.random()*internet.width()/2 - internet.width()/4; 
     var dY = internet.offset().top - ball.obj.offset().top + Math.random()*(internet.height()-ball.obj.height());
 
@@ -135,6 +123,8 @@ function anim_leaveDyno(tl, ball, i)
 	   {css: {
 	       opacity: "0"
 	   }}));
+    tl.call(function() { ball.obj.remove(); });
+    tl.pause();
 }
 
 

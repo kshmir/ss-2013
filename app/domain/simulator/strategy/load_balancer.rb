@@ -24,45 +24,42 @@ module Simulator
 
 			def step
 				dyno_to_consider = get_dyno_by_next_exit_time
-				stats = {}
+				stats = []
 
 				if !dyno_to_consider.nil? && dyno_to_consider.endtime < @next_arrival_time
 					@t = dyno_to_consider.endtime
 					req = dyno_to_consider.finish_request
-					@stats_collector.collect_req_stats req
-					dispatch_queue
-					stats = { event_type: :arrival }
+					stats <<  { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
+					stats += dispatch_queue
 				else
 					@t = @next_arrival_time
 					req = Request.new @t
 					if not @router.is_queue_full?
 						@router.queue << req
+						stats << { time: @t, event: { event_type: :arrival, req: req.id } }
 						@accepted += 1
-						dispatch_queue
+						stats += dispatch_queue
 					else
+						stats << { time: @t, event: { event_type: :rejection, req: req.id } }
 						@rejected += 1
 					end
 					interarrival_time = @next_arrival.calculate
 					@next_arrival_time = @t + interarrival_time
 					@current_iteration += 1
-					stats = { event_type: :exit }
 				end
 
-				@stats_collector.collect_stats @t, stats
-				yield(@current_iteration, @max_amount_of_iterations, stats, req) if block_given?
+				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?
 			end
 
 			def terminate
 				@next_arrival_time = Float::INFINITY
+				stats = []
 				loop do
 					req = get_dyno_by_next_exit_time.finish_request
 					dispatch_queue
-					stats = { event_type: :exit}
-					@stats_collector.collect_stats @t, stats
+					stats << { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
 					break if @clients.all? { |dyno| dyno.idle? }
 				end
-#         @stats_collector.display_and_plot
-				@stats_collector.results
 			end
 
 			def self.with_algorithm algorithm, params = {}
@@ -89,7 +86,6 @@ module Simulator
 				@clients_limit = input_variables[:clients_limit] || 10
 				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit}) )}
 				@algorithm = control_functions[:algorithm].send :new, @clients
-				@stats_collector = Simulator::Stats::Collector.new @clients
 			end
 
 
@@ -99,15 +95,15 @@ module Simulator
 			end
 
 			def dispatch_queue
-				elected_clients = []
+				stats = []
 				loop do
 					dyno = @algorithm.compute
 					break if @router.queue.size <= 0 || dyno.nil?
 					req = @router.queue.shift
 					dyno.enqueue_request @t, req
-					elected_clients << dyno.id
+					stats << { time: @t, event: { event_type: :routing, req: req.id, dyno: dyno.id } }
 				end
-				elected_clients
+				stats
 			end
 
 		end
