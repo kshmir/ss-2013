@@ -4,7 +4,7 @@ module SimWorker
   	@sim = Simulation.find(sim_id)
 		params = {}
     params[:input_variables] = { clients_limit: 25,
-                                 max_amount_of_iterations: 200 }
+                                 max_amount_of_iterations: 10 }
     algorithm =     Simulator::Strategy::Algorithm::RandomRouting
   	load_balancer = Simulator::Strategy::LoadBalancer.with_algorithm algorithm, params
     data = []

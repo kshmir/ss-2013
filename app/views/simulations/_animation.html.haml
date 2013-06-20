@@ -1,12 +1,19 @@
-%h1#myHeader Learning to animate
-%button.btn{:onclick => "createAnimation()"}
-	Click here to send a request
+/ %h1#myHeader Learning to animate
+/ %button.btn{:onclick => "createAnimation()"}
+/        Click here to send a request
+
+%button#start_btn
+        Arrancar
+%button#pause_btn
+        Detener
+%div#timeline_slider
+
 #playground
-	.router
-		%p
-			Router
-	.queues
-	.internet.img-rounded
-		INTERNET
+        .router
+                %p
+                        Router
+        .queues
+        .internet.img-rounded
+                INTERNET
 %script
-	
+        

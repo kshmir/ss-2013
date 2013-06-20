@@ -1,6 +1,18 @@
 #= require TweenMax.min
 #= require anim
 
+#=require jquery
+#=require jquery-ui
+
+control =
+    init: ()->
+	$("#timeline_slider").slider()
+	$("#start_btn").on "click", ()->
+	    document.global_timeline.resume()
+	$("#pause_btn").on "click", ()->
+	    document.global_timeline.pause()
+
+
 simulator = 
     init: ()->
         percentage = simulator.percentage = $(".js-simulation").data("percentage") 
@@ -24,7 +36,8 @@ simulator =
         toggle_screen: ()->
             $(".js-simview").removeClass("hidden")    
             $(".js-simulation").addClass("hidden")  
-            simulator.ui.animation()      
+            simulator.ui.animation()
+
 
         animation: ()->
             id = $(".js-simulation").attr "data-id"
@@ -42,7 +55,7 @@ simulator =
                     for req, event of anims
                         createAnimation(req)
                         anim_fromRouterToDyno(req, event.dyno, event.start_time, event.total_time)
-                        launch_animation(req)
                         anim_leaveDyno(req, event.dyno)       
 
 simulator.init()
+control.init()
