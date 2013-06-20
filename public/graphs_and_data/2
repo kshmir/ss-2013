@@ -4,8 +4,8 @@
   20.times do 
     s = Simulator::Strategy::LoadBalancer.with_algorithm Simulator::Strategy::Algorithm::SmartRouting, params;
     stats = Simulator::Core.simulate s do || end
-    resultados[n][:queueing_time] += stats[:total_queueing_time] / 10000
-    resultados[n][:req_queued] += stats[:req_queued]
+    resultados[n][:queueing_time] += stats[:consolidated_stats][:total_queueing_time] / 10000
+    resultados[n][:req_queued] += stats[:consolidated_stats][:req_queued]
   end
   resultados[n][:queueing_time] /= 20
   resultados[n][:req_queued] /= 20
