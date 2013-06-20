@@ -56,7 +56,7 @@ module Simulator
 				stats = []
 				loop do
 					req = get_dyno_by_next_exit_time.finish_request
-					dispatch_queue
+					stats += dispatch_queue
 					stats << { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
 					break if @clients.all? { |dyno| dyno.idle? }
 				end
