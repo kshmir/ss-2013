@@ -58,8 +58,6 @@ function anim_fromRouterToDyno(id_ball, i, delay)
     var ball = balls[id_ball];
 
     ball.spot = i;
-    queue[i].size++;
-    queue[i].text.text(queue[i].size);
 
     var dX = queue[i].obj.offset().left-router.offset().left - 5; 
     var dY = queue[i].obj.offset().top-router.offset().top - 25;
@@ -74,9 +72,9 @@ function anim_fromRouterToDyno(id_ball, i, delay)
     },delay: delay * 0.1}));
     tl.call(function() 
 	    {
-		queue[i].size-- ; 
+		queue[i].size++ ; 
 		queue[i].text.text(queue[i].size);
-	    }, [], this, "+=3");
+	    }, [], this, delay);
 }
 
 function anim_fromRouterToExit(id_ball, delay)
@@ -106,6 +104,11 @@ function anim_leaveDyno(id_ball, i, delay)
                    ],
 	       autoRotate: true
 	   }, delay: delay * 0.05}));
+    tl.call(function() 
+	    {
+		queue[i].size-- ; 
+		queue[i].text.text(queue[i].size);
+	    }, [], this, delay);
 
     tl.add(TweenLite.to(ball.obj, 5,
 	   {css: {
