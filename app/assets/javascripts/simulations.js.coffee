@@ -33,9 +33,9 @@ simulator =
                     for stat in data.content.stats
                         if (stat.event.event_type == "routing")
                             createAnimation(stat.event.req)
-                            anim_fromRouterToDyno(stat.event.req, stat.event.dyno, stat.time)
+                            anim_fromRouterToDyno(stat.event.req, stat.event.dyno, stat.time  / 5.0 )
                             launch_animation(stat.event.req)
                         else if (stat.event.event_type == "exit")
-                            anim_leaveDyno(stat.event.req, stat.event.dyno, stat.time)
+                            anim_leaveDyno(stat.event.req, stat.event.dyno, stat.time / 5.0 )
 
 simulator.init()

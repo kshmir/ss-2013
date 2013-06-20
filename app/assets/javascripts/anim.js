@@ -71,7 +71,7 @@ function anim_fromRouterToDyno(id_ball, i, delay)
          {x:dX, y:dY + 20 }],
 		 // {x:dX, y:280 - ball.spot*22 }],
 	autoRotate: true
-    },delay: delay}));
+    },delay: delay * 0.1}));
     tl.call(function() 
 	    {
 		queue[i].size-- ; 
@@ -87,7 +87,7 @@ function anim_fromRouterToExit(id_ball, delay)
 	type: "soft",
 	values: [{x:0, y:0}, {x:400, y:0}, {x:450, y:150}, {x:450, y:200}],
 	autoRotate: true,
-    }, delay: delay}));
+    }, delay: delay * 0.8}));
 }
 
 function anim_leaveDyno(id_ball, i, delay)
@@ -105,14 +105,14 @@ function anim_leaveDyno(id_ball, i, delay)
                     {x:dX, y:dY}
                    ],
 	       autoRotate: true
-	   }, delay: delay}));
+	   }, delay: delay * 0.05}));
 
     tl.add(TweenLite.to(ball.obj, 5,
 	   {css: {
 	       opacity: "0"
-	   }, delay: delay}));
+	   }, delay: delay * 0.05}));
     tl.call(function() { ball.obj.remove(); });
 }
 
 
-setup(100);
+setup(25);
