@@ -7,6 +7,7 @@ module Simulator
 											:beginning_of_processing_time,
 											:exit_from_dyno_time,
 											:id
+											:dyno
 
 				@@counter = 0
 

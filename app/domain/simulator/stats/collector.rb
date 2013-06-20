@@ -24,9 +24,9 @@ module Simulator
 			end
 
 			def collect_req_stats req
-				stats = { id: req.id }
-				[:enter_into_router_time, :enter_into_dyno_time, :beginning_of_processing_time, :exit_from_dyno_time].each do |time|
-					stats[time] = req.send time
+				stats = {}
+				[:id, :enter_into_router_time, :enter_into_dyno_time, :beginning_of_processing_time, :exit_from_dyno_time, :dyno].each do |attr|
+					stats[attr] = req.send attr
 				end
 				@results[:consolidated_stats][:total_queueing_time] += req.beginning_of_processing_time - req.enter_into_router_time
 				@results[:consolidated_stats][:req_queued] += 1 if req.enter_into_router_time != req.beginning_of_processing_time

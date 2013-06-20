@@ -21,6 +21,7 @@ module Simulator
 
 				def enqueue_request current_time, req
 					req.enter_into_dyno_time = current_time
+					req.dyno = id
 					if @idle
 						@idle = false
 						@cumu_idle_time += current_time - @start_idle_time

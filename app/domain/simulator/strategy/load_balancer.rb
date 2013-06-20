@@ -24,12 +24,14 @@ module Simulator
 
 			def step
 				dyno_to_consider = get_dyno_by_next_exit_time
+				stats = {}
 
 				if !dyno_to_consider.nil? && dyno_to_consider.endtime < @next_arrival_time
 					@t = dyno_to_consider.endtime
 					req = dyno_to_consider.finish_request
 					@stats_collector.collect_req_stats req
 					dispatch_queue
+					stats = { event_type: :arrival }
 				else
 					@t = @next_arrival_time
 					req = Request.new @t
@@ -42,12 +44,12 @@ module Simulator
 					end
 					interarrival_time = @next_arrival.calculate
 					@next_arrival_time = @t + interarrival_time
-					@current_iteration = @current_iteration + 1
+					@current_iteration += 1
+					stats = { event_type: :exit }
 				end
 
-				stats = @stats_collector.collect_stats @t
-				# TODO: fix last argument
-				yield(@current_iteration, @max_amount_of_iterations, stats, []) if block_given?
+				stats.merge! @stats_collector.collect_stats @t
+				yield(@current_iteration, @max_amount_of_iterations, stats, req) if block_given?
 			end
 
 			def terminate
