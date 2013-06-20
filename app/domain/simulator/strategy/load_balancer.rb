@@ -60,6 +60,7 @@ module Simulator
 					stats << { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
 					break if @clients.all? { |dyno| dyno.idle? }
 				end
+				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?
 			end
 
 			def self.with_algorithm algorithm, params = {}
