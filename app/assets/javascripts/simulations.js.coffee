@@ -6,12 +6,14 @@
 
 control =
     init: ()->
-	$("#timeline_slider").slider()
+	$("#timeline_slider").slider({ min: 0, max: 1 })
 	$("#start_btn").on "click", ()->
 	    debugger
 	    document.global_timeline.resume()
 	$("#pause_btn").on "click", ()->
 	    document.global_timeline.pause()
+	$("#timeline_slider").on "change", (event,ui)->
+	    document.global_timeline.progress($("#timeline_slider").value)
 
 
 simulator = 
