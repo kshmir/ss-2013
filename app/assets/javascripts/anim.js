@@ -7,8 +7,7 @@ var internet;
 var N;
 var timelines = {};
 var balls = {};
-var global_timeline = undefined;
-
+global_timeline = undefined;
 
 function setup(numberOfQueues)
 {
@@ -45,15 +44,16 @@ function createAnimation(id)
     playground.append(ball.obj);
 
     balls[id] = ball;
-    timelines[id]  = new TimelineLite();
+    timelines[id]  = new TimelineLite({paused: true});
 }
 
 function launch_animation(id_ball)
 {
     timelines[id_ball].resume();
     if (!global_timeline) {
-        global_timeline = new TimelineLite();
+        global_timeline = new TimelineLite({paused: true});
         global_timeline.timeScale(0.1);
+	document.global_timeline = global_timeline;
     }
     global_timeline.add(timelines[id_ball], { position: 0 });
 }
