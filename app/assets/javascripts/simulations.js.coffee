@@ -30,8 +30,8 @@ simulator =
             id = $(".js-simulation").attr "data-id"
             $.getJSON "/simulations/#{id}.json",(data)->
                 anims = {}
-                if (data.content)
-                    for stat in data.content.stats
+                if (data.stats)
+                    for stat in data.stats
                         if (stat.event.event_type == "routing")
                             anims[stat.event.req] = {}
                             anims[stat.event.req].dyno = stat.event.dyno;

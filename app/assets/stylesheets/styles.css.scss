@@ -24,9 +24,9 @@ $ballColor: rgba(200,0,0,0.5);
     position: absolute;
     background-color: $ballColor;
     border-radius: 50px;
-    box-shadow: 0 0 5px $ballColor;
+    // box-shadow: 0 0 5px $ballColor;
     z-index: 0;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0, lighten($ballColor, 50%)), color-stop(0.5, lighten($ballColor, 20%)), to($ballColor));
+    // background: -webkit-gradient(linear, left top, left bottom, color-stop(0, lighten($ballColor, 50%)), color-stop(0.5, lighten($ballColor, 20%)), to($ballColor));
     opacity: 0;
 }
 

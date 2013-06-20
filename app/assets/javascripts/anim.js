@@ -54,6 +54,9 @@ function launch_animation(id_ball)
     if (!global_timeline) {
         global_timeline = new TimelineLite();
         global_timeline.timeScale(0.1);
+        // global_timeline.autoRemoveChildren = true;
+        global_timeline.smoothChildTiming = true;
+
     }
     global_timeline.add(timelines[id_ball], { position: 0 });
 }

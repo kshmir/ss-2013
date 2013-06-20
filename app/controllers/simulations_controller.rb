@@ -13,7 +13,7 @@ class SimulationsController < ApplicationController
 		respond_to do |f|
 			f.html
 			f.json {
-				render :text => @sim.to_json 
+				render :text => @sim.to_json(methods: :stats)
 			}
 		end
 	end

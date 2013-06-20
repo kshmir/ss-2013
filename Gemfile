@@ -9,6 +9,7 @@ gem 'sqlite3'
 gem 'rsruby'
 gem 'resque'
 gem 'haml'
+gem 'redis-objects'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -34,6 +35,7 @@ group :assets do
   gem 'guard-livereload'
 
   gem 'uglifier', '>= 1.0.3'
+
 end
 
 group :development do

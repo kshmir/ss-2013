@@ -10,8 +10,7 @@ module SimWorker
     data = []
   	Simulator::Core.simulate load_balancer do |i, n, stats|
       @sim.percentage = (i * 1.0 / n) * 100
-      @sim.content = {stats: []} unless @sim.content
-      stats.each do |st| @sim.content[:stats] << st end
+      stats.each do |st| @sim.stats << st end
       puts @sim.percentage
       @sim.save
     end
