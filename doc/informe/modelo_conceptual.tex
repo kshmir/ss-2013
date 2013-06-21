@@ -1,15 +1,19 @@
 \section{Modelo conceptual}
 
+\subsection{Simplificaciones}
+
 Nuestro modelo es una maqueta que simula el funcionamiento lógico de un verdadero balanceador de carga. Sin embargo, los
 balanceadores de carga, por el papel que tienen en el funcionamiento de la red, tienen una complejidad mucha mas
 importante que la de nuestro modelo. En nuestro simulador, todo el funcionamiento de la red informática es una
 abstracción. El \textit{router} solamente se encarga de decidir a que servidor mandar pedidos que le llegan. No
 contemplamos tampoco las fallas y los errores lógicas y materiales que pueden ocurrir en un verdadero sistema.
 
+\subsection{Diagrama de bloques}
+
 Nuestro sistema funciona de la manera presentada en la figura \ref{fig:diagrama-bloques}. Cuando la simulación empieza,
 no hay pedidos pendientes en el sistema, y el primer pedido está llegando. Cada etapa de la simulación corresponde a un
 evento, o sea un arribo de un pedido al \textit{router}, o una salida de un pedido de un servidor. En el diagrama, se
-nota que cada pedido pasa por la cola del \textit{router} antes de llegar a un dyno. Sin embargo, en nuestro modelo,
+nota que cada pedido pasa por la cola del \textit{router} antes de llegar a un servidor. Sin embargo, en nuestro modelo,
 hacemos la simplificación que todo el tiempo que el pedido pasa en el sistema se divide entre la espera en colas y el
 procesamiento en un servidor. Los tiempos de tránsito o de \textit{routing} están considerados como despreciables.
 Entonces, si es posible mandar directamente el pedido a un servidor cuando entra en la cola del \textit{router}, el
@@ -26,4 +30,22 @@ la cola principal no afecta el pedido en este caso.
 En la figura \ref{fig:diagrama-bloques}, el bloque más importante para nuestro estudio es el bloque en verde. La
 elección del servidor puede hacerse con cualquier de los cuatro algoritmos de \textit{routing}.
 
+
+\subsection{Valores relevantes del modelo}
+
+\paragraph{Variable de control}
+En nuestro estudio, tenemos una sola variable de control: el algoritmo utilizado para elegir un servidor al que mandar
+un pedido. No es una variable cuantitativa así que no se espera encontrar el mejor algoritmo en absoluto sino observar
+las ventajas y desventajas de cada algoritmo de forma objetiva.
+
+\paragraph{Funciones objetivos}
+Contemplamos varios resultados:
+\begin{itemize}
+    \item el tiempo promedio que un pedido pasa en el sistema, entre el momento en que llega al \textit{router} hasta el
+	momento en que sale del servidor que lo atendió
+    \item el tiempo ocioso promedio de un servidor
+    \item el número de pedidos rechazados
+\end{itemize}
+De la segunda función, se estudia también el desvío entre servidores. Una calidad que se busca en un balanceador de
+carga es la equidad: es decir, todos los servidores deberían tener una carga parecida.
 
