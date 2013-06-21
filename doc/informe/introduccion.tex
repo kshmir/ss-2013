@@ -1,0 +1,24 @@
+\section{Introducción}
+
+El uso de la simulación de eventos discretos permite resolver problemas que tienen una complejidad que impide alcanzar
+a una solución con la análisis o la teoría de las probabilidades. Los casos típicos son problemas de ingeniería de la
+producción donde las interacciones entre entidades (que pueden ser humanos, productos, máquinas, computadoras, etc.) y
+la cantidad de objetos que componen el sistema completo en cualquier momento son tan complejas que resultaría imposible
+manejar un modelo matemático correspondiente.
+
+En nuestro caso, el sistema real que vamos a estudiar es un sistema de balanceo de carga en un ámbito de procesamiento
+de pedidos web. Los dispositivos de balanceo de carga son \textit{routers} que reciben pedidos y los distribuyen a
+servidores capaces de atenderlos. En el caso que nos interesa estudiar, consideramos servidores alojando aplicaciones
+web a las que usuarios quieren acceder. Cada servidor puede atender uno solo pedido a la vez. Entonces, para permitir a
+la aplicación de ser concurrente, y escalable, se usan varios servidores corriendo la misma aplicación. Del punto de
+vista del usuario externo, eso no cambia nada porque accede a la aplicación conociendo la dirección de la página web.
+Pero, internamente, el \textit{router} manda su pedido a determinado servidor. Así, la cantidad de servidores corriendo
+la aplicación es directamente vinculado a la ``concurrencia'' de la aplicación, es decir la cantidad de clientes que
+pueden ser atendidos a la vez.
+
+Sin embargo, esa concurrencia no es necesariamente \emph{proporcional} a la cantidad de servidores. Como lo muestra la
+formula de Little, la cantidad de entidades en un sistema no es igual a la cantidad de entidades en las colas más el
+número de puestos de atención, sino a la cantidad de entidades en las colas más \emph{la tasa de tránsito}, es decir el
+cociente entre el tiempo promedio entre dos arribos y el tiempo promedio de atención de una entidad. Además, en nuestro
+caso, la mejora de la concurrencia según el aumento del número de servidores depende también de la política de
+\textit{routing} elegida.

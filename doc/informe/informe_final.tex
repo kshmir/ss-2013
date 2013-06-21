@@ -6,7 +6,7 @@
 \usepackage{ucs}
 \usepackage{palatino}
 \usepackage{pdfpages}
-\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
+%\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
 \usepackage{hyperref}
 \bibliographystyle{plain-es}
 
@@ -16,8 +16,8 @@
 \usepackage{graphicx}
 \DeclareGraphicsExtensions{.pdf,.eps,.jpg,.png,.gif}
 
-\renewcommand{\emph}[1]{\textbf{#1}}
-\renewcommand{\familydefault}{\sfdefault}
+%\renewcommand{\emph}[1]{\textbf{#1}}
+%\renewcommand{\familydefault}{\sfdefault}
 
 \hypersetup{
     colorlinks = true,
@@ -30,16 +30,17 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{Problema de balanceo de carga}
-\author{Cristian \textsc{Pereyra} & Laurent \textsc{Georget}}
+\author{Cristian \textsc{Pereyra} \and Laurent \textsc{Georget}}
 
 \begin{document}
 \maketitle
 \tableofcontents
+
 \clearpage
 
-%\input{introduccion}
+\input{introduccion}
 \input{proposito}
-%\input{modelo_conceptual}
+\input{modelo_conceptual}
 %\input{modelo_datos}
 %\input{modelo_operacional}
 %\input{resultados}
