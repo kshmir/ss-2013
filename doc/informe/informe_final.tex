@@ -6,11 +6,14 @@
 \usepackage{ucs}
 \usepackage{palatino}
 \usepackage{pdfpages}
+\usepackage{tabulary}
+\usepackage{placeins}
+\usepackage{multirow}
 %\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
 \usepackage{hyperref}
 \bibliographystyle{plain-es}
 
-\pagestyle{plain}
+%\pagestyle{plain}
 
 \usepackage{subfig}
 \usepackage{graphicx}
@@ -29,7 +32,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{Problema de balanceo de carga}
+\title{Problema de balanceo de carga \\ Simulación de Sistemas - \textsc{itba}}
 \author{Cristian \textsc{Pereyra} \and Laurent \textsc{Georget}}
 
 \begin{document}
@@ -39,14 +42,18 @@
 \clearpage
 
 \input{introduccion}
+\addcontentsline{toc}{section}{Introducción}
 \input{proposito}
 \input{modelo_conceptual}
-%\input{modelo_datos}
-%\input{modelo_operacional}
+\FloatBarrier
+\input{modelo_datos}
+\input{modelo_operacional}
 %\input{resultados}
-%\input{conclusion}
+\input{conclusion}
+\addcontentsline{toc}{section}{Conclusión}
 
 
 \clearpage
 %\bibliography{../../../biblio}
 \end{document}
+
