@@ -37,7 +37,6 @@ landing =
 simulator = 
     init: ()->
         $(".anim-loading").removeClass("hidden")
-        setup(parseInt($(".js-simulation").data("clients")))
         percentage = simulator.percentage = $(".js-simulation").data("percentage") 
         if (parseInt(percentage) < 100.0)
             simulator.ui.status_updater()
@@ -64,6 +63,9 @@ simulator =
         animation: ()->
             id = $(".js-simulation").attr "data-id"
             $.getJSON "/simulations/#{id}.json",(data)->
+                $(".anim-loading").addClass("hidden")  
+                $(".js-simview").removeClass("hidden")
+                setup(parseInt($(".js-simulation").data("clients")))
                 anims = {}
                 if (data.stats)
                     for stat in data.stats
@@ -78,8 +80,8 @@ simulator =
                         createAnimation(req)
                         anim_fromRouterToDyno(req, event.dyno, event.start_time, event.total_time)
                         anim_leaveDyno(req, event.dyno)     
-                $(".anim-loading").addClass("hidden")  
-                $(".js-simview").removeClass("hidden")
+                
+                
 
 
 landing.init()
