@@ -82,21 +82,16 @@ function anim_fromRouterToDyno(id_ball, i, delay, stay_time)
     }
     , opacity: 0
     }));
-    tl.add(TweenMax.to(queue[i].obj, 0.1, {css: {
-         backgroundColor: "#FF0000"
-    }}),"-=0.2");
-
     tl.call(function() 
     {
     queue[i].size += (tl.reversed()) ? -1 : 1; 
     queue[i].text.text(queue[i].size);
     }, [], this);
-    tl.add( TweenMax.to(ball.obj, stay_time, {bezier: {
-    type: "soft",
-    values: [{x:dX, y:dY + 20}, 
-         {x:dX, y:dY + 20}]
-         // {x:dX, y:280 - ball.spot*22 }],
+    tl.add(TweenMax.to(queue[i].obj, stay_time, {css: {
+         backgroundColor: "#FF0000"
     }}));
+
+    
 }
 
 function anim_fromRouterToExit(id_ball, delay)
@@ -122,6 +117,10 @@ function anim_leaveDyno(id_ball, i, delay)
         queue[i].text.text(queue[i].size);
         }, [], this);
 
+    tl.add(TweenMax.to(queue[i].obj, 0.1, {css: {
+         backgroundColor: "rgb(79, 160, 55)"
+    }}));
+
     tl.add(TweenMax.to(ball.obj, 0.5, 
 	   {bezier: {
 	       type: "soft",
@@ -131,9 +130,7 @@ function anim_leaveDyno(id_ball, i, delay)
                    ]
 	   }, opacity: 1
     }));
-    tl.add(TweenMax.to(queue[i].obj, 0.1, {css: {
-         backgroundColor: "rgb(79, 160, 55)"
-    }}));
+    
     
 
     tl.add(TweenLite.to(ball.obj, 1,

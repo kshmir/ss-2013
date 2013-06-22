@@ -5,7 +5,7 @@ module SimWorker
 		params = {}
     params[:input_variables] = { clients_limit: 10,
                                  max_amount_of_iterations: 1000 }
-    algorithm =     Simulator::Strategy::Algorithm::SmartRouting
+    algorithm =     Simulator::Strategy::Algorithm::RandomRouting
   	load_balancer = Simulator::Strategy::LoadBalancer.with_algorithm algorithm, params
     data = []
   	Simulator::Core.simulate load_balancer do |i, n, stats|
