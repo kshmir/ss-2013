@@ -6,5 +6,7 @@ class Simulation < ActiveRecord::Base
 	include Redis::Objects
 
 	list :stats, marshal: true
+
+	attr_accessor :strategy, :clients, :iterations
 end
 

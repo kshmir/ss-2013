@@ -123,3 +123,13 @@ $internetColor: lighten(#66ccff, 10%);
     height: 10px;
     float: right;
 }
+
+.form-horizontal .form-actions {
+    padding-top: 20px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}
+
+.form-horizontal {
+    margin-bottom: 0px;
+}
