@@ -1,0 +1,36 @@
+%h3
+  Historial de simulaciones.
+
+- if !@simulations || @simulations.empty?
+  No hay simulaciones hechas todavía. 
+- else
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Inicio
+        %th Duración
+        %th Iteraciones
+        %th Clientes
+        %th Estrategia
+        %th Porcentaje
+        %th &nbsp;
+    %tbody
+      - @simulations.each do |simu|
+        %tr
+          %td
+            Hace
+            = time_ago_in_words simu.created_at
+          %td
+            = "%.2f" % (simu.updated_at - simu.created_at)
+            Segundos
+          %td
+            = simu.iterations
+          %td
+            = simu.clients
+          %td
+            = t "strategy.#{simu.strategy}"
+          %td
+            = simu.percentage
+            \%
+          %td
+            = link_to("Ver", simulation_path(simu), class: "btn btn-mini btn-primary")

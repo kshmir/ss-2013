@@ -1,13 +1,18 @@
+.row
+	.offset5.span2
+		%a.btn.btn-danger.js-simulation-toggle
+			Nueva simulación
+
 .simulation-form.hidden
 	.row
 		.offset3.span6
 			.well
-				= bootstrap_form_for Simulation.new, html: { class: "form-horizontal" }  do |f|
+				= bootstrap_form_for Simulation.new, remote: true, html: { class: "form-horizontal" }  do |f|
 					= f.select :strategy, ["Random", "Smart", "Round Robin", "Shortest Queue"]
-					= f.select :clients, (1..50).step(10).to_a
+					= f.select :clients, (5..50).step(5).to_a
 					= f.select :iterations, (50..500).step(50).to_a
 					= f.actions do
-						= f.button "Nueva Simulación", class: "btn btn-danger"
+						= f.submit "Nueva Simulación", class: "btn btn-danger"
 		.offset4
 
 / = link_to "Iniciar nueva simulación", simulations_path, class: "btn btn-danger btn-large js-init-simu", remote: true, method: :post

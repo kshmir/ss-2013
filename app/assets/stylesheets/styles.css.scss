@@ -133,3 +133,9 @@ $internetColor: lighten(#66ccff, 10%);
 .form-horizontal {
     margin-bottom: 0px;
 }
+
+.anim-loading {
+    background: url("/assets/spinner.gif") 50% 50% no-repeat no-repeat;
+    width: 100%;
+    height: 500px;
+}

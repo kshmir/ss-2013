@@ -25,10 +25,21 @@ control =
 	    document.global_timeline.pause()
 
 
+landing = 
+    init: ()->
+        $(".js-simulation-toggle").on "click", ()->
+            $(this).slideUp "slow", ()->
+                $(".simulation-form").hide()
+                $(".simulation-form").removeClass "hidden"
+                $(".simulation-form").slideDown "slow"
+
+
 simulator = 
     init: ()->
+        $(".anim-loading").removeClass("hidden")
+        setup(parseInt($(".js-simulation").data("clients")))
         percentage = simulator.percentage = $(".js-simulation").data("percentage") 
-        if (parseInt(percentage) <= 100.0)
+        if (parseInt(percentage) < 100.0)
             simulator.ui.status_updater()
         else
             simulator.ui.toggle_screen()
@@ -46,8 +57,7 @@ simulator =
                     simulator.ui.toggle_screen()
             )
         toggle_screen: ()->
-            $(".js-simview").removeClass("hidden")    
-            $(".js-simulation").addClass("hidden")  
+            $(".js-simulation").addClass("hidden")
             simulator.ui.animation()
 
 
@@ -67,7 +77,11 @@ simulator =
                     for req, event of anims
                         createAnimation(req)
                         anim_fromRouterToDyno(req, event.dyno, event.start_time, event.total_time)
-                        anim_leaveDyno(req, event.dyno)       
+                        anim_leaveDyno(req, event.dyno)     
+                $(".anim-loading").addClass("hidden")  
+                $(".js-simview").removeClass("hidden")
 
+
+landing.init()
 simulator.init()
 control.init()

@@ -1,6 +1,6 @@
 class SimulationsController < ApplicationController
 	def create
-		@sim = Simulation.new
+		@sim = Simulation.new params[:simulation]
 		@sim.percentage = 0.0
 		@sim.save
 

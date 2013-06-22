@@ -138,6 +138,3 @@ function anim_leaveDyno(id_ball, i, delay)
 	       opacity: "0"
 	   }}));
 }
-
-
-setup(25);
