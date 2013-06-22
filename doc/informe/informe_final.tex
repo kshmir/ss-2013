@@ -1,0 +1,52 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{ucs}
+\usepackage{palatino}
+\usepackage{pdfpages}
+%\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
+\usepackage{hyperref}
+\bibliographystyle{plain-es}
+
+\pagestyle{plain}
+
+\usepackage{subfig}
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.pdf,.eps,.jpg,.png,.gif}
+
+%\renewcommand{\emph}[1]{\textbf{#1}}
+%\renewcommand{\familydefault}{\sfdefault}
+
+\hypersetup{
+    colorlinks = true,
+    urlcolor = blue,
+    linkcolor = black,
+    citecolor = black,
+    filecolor = black
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{Problema de balanceo de carga}
+\author{Cristian \textsc{Pereyra} \and Laurent \textsc{Georget}}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\clearpage
+
+\input{introduccion}
+\input{proposito}
+\input{modelo_conceptual}
+%\input{modelo_datos}
+%\input{modelo_operacional}
+%\input{resultados}
+%\input{conclusion}
+
+
+\clearpage
+%\bibliography{../../../biblio}
+\end{document}
