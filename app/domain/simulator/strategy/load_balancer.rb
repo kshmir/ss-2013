@@ -38,7 +38,6 @@ module Simulator
 						@router.queue << req
 						stats << { time: @t, event: { event_type: :arrival, req: req.id } }
 						@accepted += 1
-						stats += dispatch_queue
 					else
 						stats << { time: @t, event: { event_type: :rejection, req: req.id } }
 						@rejected += 1

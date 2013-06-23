@@ -51,7 +51,7 @@ simulator =
                 simulator.percentage = perc = data.percentage
                 $(".bar").css("width", "#{perc}%")
                 if (parseInt(perc) < 100.0)
-                    setTimeout(simulator.ui.status_updater,100)
+                    setTimeout(simulator.ui.status_updater,500)
                 else
                     simulator.ui.toggle_screen()
             )

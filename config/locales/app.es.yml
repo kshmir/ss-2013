@@ -1,6 +1,6 @@
 es:
-	strategy:
-		random: Random
-		smart: Smart
-		shortest_queue: Shortest Queue
-		round_robin: Round Robin
+    strategy:
+        random: "Random"
+        smart: "Smart"
+        shortest_queue: "Shortest Queue"
+        round_robin: "Round Robin"
