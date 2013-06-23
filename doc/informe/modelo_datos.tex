@@ -1,0 +1,34 @@
+\section{Modelo de datos}
+
+A los dos tipos de eventos que contemplamos en nuestro modelo corresponden dos muestras artificiales.
+La primera variable aleatoria sirve para definir los tiempos entre llegadas, la segunda para los 
+tiempos de procesamiento de los pedidos en los servidores. Para definir las distribuciones de esas
+variables aleatorias, nos basamos en el artículo de RapGenius. Ellos estudiaron las distribuciones
+de llegadas y de salidas en su propio caso y utilizar los mismos datos nos permite comparar nuestros
+resultados con los suyos.
+
+\paragraph{Distribución de tiempo entre llegadas}
+Los pedidos llegan al \textit{router} según un proceso de Poisson. Según RapGenius, hay un promedio
+de nueve mil pedidos por minutos. Elegimos como unidad de tiempo en todo el modelo la milisegundo;
+entonces nuestra primera muestra artificial usa una distribución de Poisson de parámetro 
+$\lambda = 6.667 \mathrm{ms}$.
+
+\paragraph{Distribución de tiempo de procesamiento}
+En el ámbito de aplicaciones web, la amplitud del intervalo de los tiempos de procesamiento 
+es muy grande. 
+Según RapGenius, el tiempo mínimo es de $10\mathrm{ms}$ y el máximo de $30000\mathrm{ms}$.
+La distribución acumulada de los tiempos es la siguiente:
+\begin{table}
+    \centering
+    \begin{tabulary}{\textwidth}{|C|C|C|C|C|C|C|C|C|}
+        \hline
+        1\% & 5\% & 10\% & 25\% & 50\% & 75\% & 90\% & 99\% & 99.9\% \\
+        \hline
+        7ms & 8ms & 13ms & 23ms & 46ms & 255ms & 923ms & 3144ms & 7962ms \\
+        \hline
+    \end{tabulary}
+    \caption{Distribución de los tiempos de procesamiento}
+    \label{tab:distro-procesamiento}
+\end{table}
+Esta distribución se aproxima muy bien con $Weibull(shape=0.46,\;scale=111)$ modificada
+para tener en cuenta un mínimo de $10\mathrm{ms}$ y un máximo de $30000\mathrm{ms}$.

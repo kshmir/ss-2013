@@ -1,8 +1,8 @@
 \section{Propósito y base del trabajo}
 
-Nuestro proyecto se base en un artículo de RapGenius, cliente del proveedor Heroku. En este artículo, RapGenius critica
+Nuestro proyecto se basa en un artículo de RapGenius, cliente del proveedor Heroku. En este artículo, RapGenius critica
 el reciente cambio en la política de load-balancing de su proveedor, mostrando, con resultados de simulaciones corridas
-en R, que ese cambio resulta en una pérdida de performancia importante. Según RapGenius, una empresa necesitaría
+en R, que ese cambio resulta en resultados pésimos. Según RapGenius, una empresa necesitaría
 cincuenta veces más servidores corriendo la misma aplicación para alcanzar la misma disponibilidad con el nuevo modelo
 de routing, muy sencillo, que la que permitía el antiguo modelo, que usaba un algoritmo más complicado.
 
@@ -13,12 +13,12 @@ de routing, muy sencillo, que la que permitía el antiguo modelo, que usaba un a
     \label{fig:random+smart}
 \end{figure}
 
-El primer algoritmo, llamado ``Smart routing'', hace que cuando el \textit{router} recibe un pedido, lo manda a un dyno
+El primer algoritmo, llamado ``Smart routing'', hace que cuando el \textit{router} recibe un pedido, lo manda a un servidor
 desocupado. Si no hay, lo guarda en una cola. Cada vez que un servidor se desocupa, el pedido que llegó primero en la
 cola va a este servidor. Entonces, en este modelo, no hay cola a nivel de servidores.
 
 El segundo algoritmo se llama ``Random routing''. Es mucho más sencillo. El \textit{router} manda cada pedido que llega
-a un servidor cualquiero. La unica condición es que el servidor debe tener lugar en su cola. Si está lleno, el
+a cualquier servidor. La única condición es que el servidor debe tener lugar en su cola. Si está lleno, el
 \textit{router} intenta con otro servidor, hasta que encuentra un servidor o que alcanza un número máximo de intentos.
 Si no logra encontrar un servidor con lugar en su cola, guarda el pedido en su propia cola.
 
@@ -34,31 +34,12 @@ algoritmo. Por eso, estudiamos además del ``Smart routing'' y del ``Random rout
 \end{figure}
 
 
-\begin{table}
-    \centering
-    \begin{tabular}{|l||l|l|}
-	\hline
-	Algoritmo & Complejidad de implementación & Equidad en la ocupación \\
-	\hline
-	Random routing & 2 & 4 \\
-	\hline
-	Round-robin routing & 1 & 3 \\
-	\hline
-	Shortest queue routing & 4 & 1 \\
-	\hline
-	Smart routing & 3 & 2 \\
-	\hline
-    \end{tabular}
-    \caption{Cuadro comprativo de los resultados esperados}
-    \label{tab:compartativo-esperados}
-\end{table}
-
 El algoritmo de round-robin funciona de manera muy simple. El \textit{router} construye una lista circular\footnote{Una 
 lista ``sin fin'' donde el elemento siguiente del último es el primero} de servidores y sabe a cual mandó el último pedido. 
 Cuando recibe otro, lo manda al servidor siguiente en la lista, si ese tiene lugar en su cola. Si no, intenta con el
 siguiente. Si ningún servidor tiene lugar, guarda el pedido en su propia cola.
 
-Para finalizar, cuando usa el algoritmo de ``Shortest queue'', el \textit{router} manda cada pedido que llega al
+Para finalizar, cuando usa el algoritmo de ``Shortest queue'', el \textit{router} manda cada pedido que llega al
 servidor que tiene menos cola (o no cola) en este momento. Si hay más de un servidor con cola mínima, elige uno al
 azar. Es el algoritmo más complicado de implementar, ya que requiere que el \textit{router} conozca el estado completo
 de los servidores a cada momento.

@@ -1,0 +1,22 @@
+\section*{Conclusión}
+
+La simulación de eventos discretos sirve para encontrar soluciones, a veces
+aproximadas, a problemas que no se pueden resolver analíticamente o solamente
+con los herramientas de la estadística. Sin embargo, es un método muy formal,
+que requiere un gran rigor, para que permita sacar conclusiones y recomendaciones
+relevantes. Su otra ventaja es que, además de los resultados, la simulación suele
+presentar resultados gráficos que permiten entender mejor el funcionamiento del
+sistema, ver donde quedan los cuellos de botella, estudiar las interacciones
+que no se pueden predecir en un modelo matemático, etc.
+
+% me falta un poco de chamullo mágico acá a propósito de los resultados
+
+La elección de Ruby on Rails para desarrollar el simulador resultó una 
+experimentación muy útil y muy positiva. El lenguaje Ruby, por ser mucho más
+lento que Java o C++, no se usa para proyectos de SED muy grandes. 
+El mayor problema es la escalabilidad: Ruby no permite, por su construcción,
+manejar simulaciones con miles de entidades a la vez y grandes colecciones de datos.
+Sin embargo, para estudios sobre sistemas bastante pequeños y que no requieren 
+una cantidad increíbles de corridas, la facilidad de programación de Ruby 
+es una ventaja enorme. 
+

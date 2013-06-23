@@ -5,7 +5,7 @@
 Nuestro modelo es una maqueta que simula el funcionamiento lógico de un verdadero balanceador de carga. Sin embargo, los
 balanceadores de carga, por el papel que tienen en el funcionamiento de la red, tienen una complejidad mucha mas
 importante que la de nuestro modelo. En nuestro simulador, todo el funcionamiento de la red informática es una
-abstracción. El \textit{router} solamente se encarga de decidir a que servidor mandar pedidos que le llegan. No
+abstracción. El \textit{router} solamente se encarga de decidir a que servidor mandar pedidos que le llegan. No
 contemplamos tampoco las fallas y los errores lógicas y materiales que pueden ocurrir en un verdadero sistema.
 
 \subsection{Diagrama de bloques}
@@ -31,10 +31,12 @@ En la figura \ref{fig:diagrama-bloques}, el bloque más importante para nuestro 
 elección del servidor puede hacerse con cualquier de los cuatro algoritmos de \textit{routing}.
 
 
-\subsection{Valores relevantes del modelo}
+\subsection{Plan de cuadros}
+
+\subsubsection{Valores relevantes del modelo}
 
 \paragraph{Variable de control}
-En nuestro estudio, tenemos una sola variable de control: el algoritmo utilizado para elegir un servidor al que mandar
+En nuestro estudio, tenemos una sola variables de control: el algoritmo utilizado para elegir un servidor al que mandar
 un pedido. No es una variable cuantitativa así que no se espera encontrar el mejor algoritmo en absoluto sino observar
 las ventajas y desventajas de cada algoritmo de forma objetiva.
 
@@ -48,4 +50,85 @@ Contemplamos varios resultados:
 \end{itemize}
 De la segunda función, se estudia también el desvío entre servidores. Una calidad que se busca en un balanceador de
 carga es la equidad: es decir, todos los servidores deberían tener una carga parecida.
+
+
+\paragraph{Parámetros}
+Algunos valores pueden afectar la simulación. Eses parámetros son los siguientes:
+\begin{itemize}
+    \item el número de servidores
+    \item el tamaño máximo de la cola de \textit{router}
+    \item el tamaño máximo de la cola de cada servidor, en el caso de \textit{Smart routing}, no hay colas en los servidores
+    \item la cantidad de corridas
+\end{itemize}
+
+
+\subsubsection{Resultados esperados}
+
+\begin{table}
+    \centering
+    \begin{tabulary}{\textwidth}{|c||C||C|C|C|}
+    \hline
+    Algoritmo & Número de servidores & Duración promedia de un pedido & Tiempo ocioso promedio & Desvío entre servidores del tiempo ocioso \\
+    \hline
+	\multirow{4}{1.8cm}{Random routing} & 30 &  &  &  \\
+                                        & 40 &  &  &  \\
+                                        & 50 &  &  &  \\
+                                        & 60 &  &  &  \\
+	\hline
+    \multirow{4}{1.8cm}{Round-robin routing} & 30 &  &  &  \\
+                                             & 40 &  &  &  \\
+                                             & 50 &  &  &  \\
+                                             & 60 &  &  &  \\
+	\hline
+    \multirow{4}{1.8cm}{Shortest queue routing} & 30 &  &  &  \\
+                                                & 40 &  &  &  \\
+                                                & 50 &  &  &  \\
+                                                & 60 &  &  &  \\
+	\hline
+    \multirow{4}{1.8cm}{Smart routing} & 30 &  &  &  \\
+                                       & 40 &  &  &  \\
+                                       & 50 &  &  &  \\
+                                       & 60 &  &  &  \\
+	\hline
+    \end{tabulary}
+    \caption{Cuadro comprativo de los resultados esperados}
+    \label{tab:plan-cuadros}
+\end{table}
+
+
+
+Los resultados que esperamos están presentados en el cuadro \ref{tab:comparativo-esperados}. Este cuadro se lee de la 
+siguiente manera: para ciertos criterios, que consideramos relevantes, hicimos una clasificación de los algoritmos. Para
+cada criterio, el algoritmo clasificado como ``1'' es el mejor, y el ``4'' el peor. 
+
+\begin{table}
+    \centering
+    \begin{tabulary}{\textwidth}{|c||C|C|C|}
+    \hline
+    Algoritmo & Complejidad  de implementación & Equidad en la ocupación & Duración promedia de un pedido \\
+    \hline
+	Random routing & 2 & 4 & 4\\
+	\hline
+	Round-robin routing & 1 & 3 & 3\\
+	\hline
+	Shortest queue routing & 4 & 1 & 2\\
+	\hline
+	Smart routing & 3 & 2 & 1\\
+	\hline
+    \end{tabulary}
+    \caption{Cuadro comprativo de los resultados esperados}
+    \label{tab:comparativo-esperados}
+\end{table}
+
+\subsection{Diagrama de flujo}
+
+%falta el diagrama de flujo por acá
+Tomamos la decisión de incluir en el diagrama de flujo únicamente la lógica del modelo,
+olvidándonos a propósito de las ecuaciones y de los pasos que describen la colección de los
+datos estadísticos. La motivación principal para eso es aliviar lo más posible el diagrama
+para hacer hincapié en la lógica. Además, si bien un diagrama de flujo describe con exactitud
+la lógica de un algoritmo, no sirve para diseñar el almacenamiento de los datos, y esta parte
+tiene demasiada importancia a la hora de describir la colección de datos estadísticos para
+ignorarla.
+
 
