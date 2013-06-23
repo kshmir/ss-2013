@@ -8,14 +8,13 @@ module Simulator
 				end
 
 				def compute
-					super
+					return nil if @clients.reject { |x| x.nil? }.count { |dyno| dyno.is_queue_full? } >= @clients.reject { |x| x.nil? }.count
+
 				  client = nil
-					attempt = 0
 					loop do
-						attempt += 1
 						@last_elected = (@last_elected + 1) % @clients.size 
 						client = @clients[@last_elected]
-						break if !client.is_queue_full? || attempt == @clients.size
+						break if !client.is_queue_full?
 					end
 					client.is_queue_full? ? nil : client
 				end

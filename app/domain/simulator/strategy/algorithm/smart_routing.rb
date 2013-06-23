@@ -8,11 +8,6 @@ module Simulator
 				end
 
 				def compute
-					super
-
-					# in the case all the dynos are busy,
-					# return no dyno
-					# return nil if @clients.count { |dyno| dyno.queue.size == 0 } == 0
 					
 					available_clients = @clients.select { |dyno| dyno.idle? }.shuffle
 					if available_clients.empty?

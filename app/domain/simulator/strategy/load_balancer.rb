@@ -54,12 +54,12 @@ module Simulator
 				@next_arrival_time = Float::INFINITY
 				stats = []
 				loop do
-					dyno = get_dyno_by_next_time
+					break if @clients.all? { |dyno| dyno.idle? }
+					dyno = get_dyno_by_next_exit_time
 					@t = dyno.endtime
 					req = get_dyno_by_next_exit_time.finish_request
 					stats += dispatch_queue
 					stats << { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
-					break if @clients.all? { |dyno| dyno.idle? }
 				end
 				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?
 			end

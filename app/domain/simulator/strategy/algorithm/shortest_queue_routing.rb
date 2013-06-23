@@ -7,7 +7,6 @@ module Simulator
 				end
 
 				def compute
-					super
 					client = @clients.shuffle.min_by { |dyno| dyno.queue.size }
 					client.is_queue_full? ? nil : client
 				end
