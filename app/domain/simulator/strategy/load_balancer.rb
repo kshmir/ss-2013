@@ -2,6 +2,8 @@ module Simulator
 	module Strategy
 		class LoadBalancer < Strategy::Base
 
+			attr_reader :algorithm
+
 			def initialize params = {}
 				super(params)
 				init
@@ -30,6 +32,7 @@ module Simulator
 					@t = dyno_to_consider.endtime
 					req = dyno_to_consider.finish_request
 					stats <<  { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
+					@results[:durations] << req.exit_from_dyno_time - req.beginning_of_processing_time
 					stats += dispatch_queue
 				else
 					@t = @next_arrival_time
@@ -38,6 +41,7 @@ module Simulator
 						@router.queue << req
 						stats << { time: @t, event: { event_type: :arrival, req: req.id } }
 						@accepted += 1
+						stats += dispatch_queue
 					else
 						stats << { time: @t, event: { event_type: :rejection, req: req.id } }
 						@rejected += 1
@@ -60,8 +64,15 @@ module Simulator
 					req = get_dyno_by_next_exit_time.finish_request
 					stats += dispatch_queue
 					stats << { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
+					@results[:durations] << req.exit_from_dyno_time - req.beginning_of_processing_time
 				end
+				@results[:idle_times] = @clients.map { |dyno| dyno.cumulative_idle_time @t }
+				@results[:consolidated][:mean_idle_time]	= @results[:idle_times].mean
+				@results[:consolidated][:mean_duration]		= @results[:durations].mean
+				@results[:consolidated][:std_dev_idle_time]	= @results[:idle_times].standard_deviation
+				@results[:consolidated][:std_dev_duration]	= @results[:durations].standard_deviation
 				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?
+				@results[:consolidated]
 			end
 
 			def self.with_algorithm algorithm, params = {}
@@ -88,6 +99,8 @@ module Simulator
 				@clients_limit = input_variables[:clients_limit] || 10
 				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit}) )}
 				@algorithm = control_functions[:algorithm].send :new, @clients
+
+				@results = {idle_times: [], durations: [], consolidated: {} }
 			end
 
 
