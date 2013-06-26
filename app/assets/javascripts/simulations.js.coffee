@@ -19,6 +19,22 @@ control =
         $("#pause_btn").on "click", ()->
             global_timeline.pause()
 
+        $(".js-anim-toggle").on "click", ()->
+            $(".tab").hide()
+            $(".nav-pills li").removeClass("active")
+            $(this).parents("li").addClass("active")
+            $(".js-sim-tab").show()
+        $(".js-result-toggle").on "click", ()->
+            $(".tab").hide()
+            $(".nav-pills li").removeClass("active")
+            $(this).parents("li").addClass("active")
+            $(".js-result-tab").show()
+        $(".js-graph-toggle").on "click", ()->
+            $(".tab").hide()
+            $(".nav-pills li").removeClass("active")
+            $(this).parents("li").addClass("active")
+            $(".js-graph-tab").show()
+
         $time = $(".js-time")
         setInterval(()->
             if (global_timeline)

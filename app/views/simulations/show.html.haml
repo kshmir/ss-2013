@@ -6,4 +6,14 @@
 
 .anim-loading.hidden
 .js-simview.hidden
-  = render(:partial => "animation")
+  %ul.nav.nav-pills
+    %li.active
+      %a.js-anim-toggle{:href => "#"} Animación
+    %li
+      %a.js-result-toggle{:href => "#"} Resultados
+    %li
+      %a.js-graph-toggle{:href => "#"} Gráficos
+  .js-sim-tab.tab
+    = render(:partial => "animation")
+  .js-result-tab.tab
+  .js-graph-tab.tab
