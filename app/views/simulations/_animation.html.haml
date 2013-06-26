@@ -4,14 +4,25 @@
 
 
 
-%button#start_btn.btn
-  Arrancar
-%button#pause_btn.btn
-  Detener
-
-%div#timeline_slider
-
-%div#speed_slider
+.well
+  .row
+    .span2
+      %button#start_btn.btn.btn-small
+        Arrancar
+      %button#pause_btn.btn.btn-small
+        Detener
+    .span4  
+      Velocidad de simulación:
+      .btn-group
+        %button.btn.btn-small.js-1-times 1ms
+        %button.btn.btn-small.js-20-times 20 ms 
+        %button.btn.btn-small.js-100-times 100 ms
+        %button.btn.btn-small.js-1000-times 1 s
+    .span5.spancustom
+      Progreso:
+      %span.js-time 0.0s 
+      \/
+      %span.js-total-time 0.0s
 
 #playground
   .router

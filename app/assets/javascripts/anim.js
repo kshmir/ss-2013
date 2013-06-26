@@ -7,7 +7,7 @@ var internet;
 var N;
 var timelines = {};
 var balls = {};
-var global_timeline;
+global_timeline = undefined;
 
 function setup(numberOfQueues)
 {
@@ -47,12 +47,12 @@ function createAnimation(id)
     timelines[id]  = new TimelineLite();
 
     if (!global_timeline) {
+        $time = $(".js-time")
         global_timeline = new TimelineLite({paused: true,
             onUpdate: function() {
-                $("#timeline_slider").slider("value", global_timeline.progress() * 100)
+                $time.text((global_timeline.time() / 1000).toFixed(3) + "s")
             }
         });
-        global_timeline.timeScale(0.1);
         global_timeline.autoRemoveChildren = true;
         global_timeline.smoothChildTiming = true;
         document.global_timeline = global_timeline;
@@ -91,17 +91,23 @@ function anim_fromRouterToDyno(id_ball, i, delay, stay_time)
          backgroundColor: "#FF0000"
     }}));
 
+
     
 }
 
-function anim_fromRouterToExit(id_ball, delay)
+function anim_fromRouterToExit(id_ball, start_time)
 {
     var tl = timelines[id_ball];
     var ball = balls[id_ball];
-    tl.add( TweenMax.to(ball.obj, 2, {bezier: {
+    tl.add( TweenMax.to(ball.obj, 0.01, { opacity:1, delay: start_time }));
+    tl.call(function() 
+    {
+        $(".js-time").text(((start_time) / 1000.0).toFixed(3) + "s")
+    }, [], this);
+    tl.add( TweenMax.to(ball.obj, 0.5, {bezier: {
 	type: "soft",
 	values: [{x:0, y:0}, {x:400, y:0}, {x:450, y:150}, {x:450, y:200}]
-    }, delay: delay * 0.8}));
+    },opacity:0}));
 }
 
 function anim_leaveDyno(id_ball, i, delay)

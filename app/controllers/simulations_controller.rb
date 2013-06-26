@@ -8,12 +8,21 @@ class SimulationsController < ApplicationController
 		respond_to :js
 	end
 
+	def destroy
+		@sim = Simulation.find(params[:id])
+		@sim.delete
+	end
+
 	def show
 		@sim = Simulation.find(params[:id])
 		respond_to do |f|
 			f.html
 			f.json {
-				render :text => @sim.to_json(methods: :stats)
+				unless params[:status]
+					render :text => @sim.to_json(methods: :stats)
+				else
+					render :text => @sim.to_json
+				end
 			}
 		end
 	end
