@@ -85,7 +85,6 @@ simulator =
                             createAnimation(req)
                             if event.dyno != undefined
                                 anim_fromRouterToDyno(req, event.dyno, event.start_time, event.total_time)
-                                debugger
                                 anim_leaveDyno(req, event.dyno)
                             else
                                 anim_fromRouterToExit(req, event.start_time)

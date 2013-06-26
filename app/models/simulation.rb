@@ -9,5 +9,10 @@ class Simulation < ActiveRecord::Base
 	include Redis::Objects
 
 	list :stats, marshal: true
+	list :stats_json
+
+	def json
+		stats_json ||= stats.to_json
+	end
 end
 
