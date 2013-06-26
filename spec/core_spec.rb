@@ -34,12 +34,18 @@ describe Simulator::Strategy::Algorithm::RoundRobinRouting do
 		before (:each) do
 			@client1 = mock(Simulator::Strategy::RequestProcessor::Client)
 			@client2 = mock(Simulator::Strategy::RequestProcessor::Client)
-			@gen = Simulator::Strategy::Algorithm::RoundRobinRouting.new [@client1,@client2]
+			@client3 = mock(Simulator::Strategy::RequestProcessor::Client)
+			@client4 = mock(Simulator::Strategy::RequestProcessor::Client)
+			@client5 = mock(Simulator::Strategy::RequestProcessor::Client)
+			@gen = Simulator::Strategy::Algorithm::RoundRobinRouting.new [@client1,@client2,@client3,@client4,@client5]
 		end
 
 		it "should return first dyno on first call if not full" do
 			@client1.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
 			@client2.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client3.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client4.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client5.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
 			answer = @gen.compute
 			answer.should equal(@client1)
 		end
@@ -47,17 +53,29 @@ describe Simulator::Strategy::Algorithm::RoundRobinRouting do
 		it "should return second dyno if first is full" do
 			@client1.should_receive(:is_queue_full?).any_number_of_times.and_return(true)
 			@client2.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client3.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client4.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client5.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
 			answer = @gen.compute
 			answer.should equal(@client2)
 		end
 
-		it "should return first dyno, then second, then first again" do
+		it "should return first dyno, then second, then ... then first again" do
 			@client1.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
 			@client2.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client3.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client4.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
+			@client5.should_receive(:is_queue_full?).any_number_of_times.and_return(false)
 			answer = @gen.compute
 			answer.should equal(@client1)
 			answer = @gen.compute
 			answer.should equal(@client2)
+			answer = @gen.compute
+			answer.should equal(@client3)
+			answer = @gen.compute
+			answer.should equal(@client4)
+			answer = @gen.compute
+			answer.should equal(@client5)
 			answer = @gen.compute
 			answer.should equal(@client1)
 		end

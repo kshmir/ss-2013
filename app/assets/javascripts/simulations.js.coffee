@@ -56,7 +56,6 @@ simulator =
                         setTimeout(simulator.ui.status_updater,100)
                     else
                         simulator.ui.toggle_screen()
-                
         toggle_screen: ()->
             $(".js-simulation").addClass("hidden")
             simulator.ui.animation()

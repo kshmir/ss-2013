@@ -10,13 +10,12 @@ module Simulator
 				end
 
 				def compute
-					super
+					return nil if @clients.reject { |x| x.nil? }.count { |dyno| dyno.is_queue_full? } >= @clients.reject { |x| x.nil? }.count
+
 				  client = nil
-					attempt = 0
 					loop do # Review this... it will be too slow
-						attempt += 1
 						client = @clients[@@fish_monger.rand(@clients.length)]
-						break if !client.is_queue_full? || attempt > @clients.length * 3
+						break if !client.is_queue_full?
 					end
 					client.is_queue_full? ? nil : client
 				end
