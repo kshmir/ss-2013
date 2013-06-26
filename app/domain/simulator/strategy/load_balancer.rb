@@ -50,6 +50,7 @@ module Simulator
 					@next_arrival_time = @t + interarrival_time
 					@current_iteration += 1
 				end
+				@clients.each_index { |idyno| @results[:queue_lengths][idyno] += @clients[idyno].queue.length }
 
 				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?
 			end
@@ -63,12 +64,16 @@ module Simulator
 					@t = dyno.endtime
 					req = get_dyno_by_next_exit_time.finish_request
 					stats += dispatch_queue
+					@clients.each { |dyno| @results[:queue_length] += dyno.queue.length }
 					stats << { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
 					@results[:durations] << req.beginning_of_processing_time - req.enter_into_router_time
 				end
 				@results[:idle_times] = @clients.map { |dyno| dyno.cumulative_idle_time @t }
+				@clients.each_index { |idyno| @results[:queue_lengths][idyno] /= @max_amount_of_iterations }
+				@results[:consolidated][:mean_queue_length] = @results[:queue_lengths].mean
 				@results[:consolidated][:mean_idle_time]	= @results[:idle_times].mean
 				@results[:consolidated][:mean_duration]		= @results[:durations].mean
+				@results[:consolidated][:std_dev_queue_length] = @results[:queue_lengths].standard_deviation
 				@results[:consolidated][:std_dev_idle_time]	= @results[:idle_times].standard_deviation
 				@results[:consolidated][:std_dev_duration]	= @results[:durations].standard_deviation
 				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?
