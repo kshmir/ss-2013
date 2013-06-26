@@ -112,8 +112,9 @@ module Simulator
 			def dispatch_queue
 				stats = []
 				loop do
+					break if @router.queue.size <= 0
 					dyno = @algorithm.compute
-					break if @router.queue.size <= 0 || dyno.nil?
+					break if dyno.nil?
 					req = @router.queue.shift
 					dyno.enqueue_request @t, req
 					stats << { time: @t, event: { event_type: :routing, req: req.id, dyno: dyno.id } }
