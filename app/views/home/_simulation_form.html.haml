@@ -10,7 +10,8 @@
 				= bootstrap_form_for Simulation.new, remote: true, html: { class: "form-horizontal" }  do |f|
 					= f.select :strategy, ["Random", "Smart", "Round Robin", "Shortest Queue"]
 					= f.select :clients, (5..50).step(5).to_a
-					= f.select :iterations, (50..500).step(50).to_a
+					= f.select :iterations, (50..50000).step(50).to_a
+					= f.select :reqs_per_second, (1..300).step(1).to_a
 					= f.actions do
 						= f.submit "Nueva Simulación", class: "btn btn-danger"
 		.offset4

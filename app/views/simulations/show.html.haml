@@ -1,9 +1,9 @@
 .js-simulation.hidden{ "data-id" => @sim.id, "data-percentage" => @sim.percentage, "data-clients" => @sim.clients, "data-strategy" => @sim.strategy }
-	%h3
-		Simulando...
-	.progress.progress-striped.active
-		.bar{ :style => "width:#{@sim.percentage}%"}
+  %h3
+    Simulando...
+  .progress.progress-striped.active
+    .bar{ :style => "width:#{@sim.percentage}%"}
 
 .anim-loading.hidden
 .js-simview.hidden
-	= render(:partial => "animation")
+  = render(:partial => "animation")

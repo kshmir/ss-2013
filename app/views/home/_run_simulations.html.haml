@@ -13,10 +13,11 @@
         %th Clientes
         %th Estrategia
         %th Porcentaje
+        %th Pedidos por Segundo
         %th &nbsp;
     %tbody
       - @simulations.each do |simu|
-        %tr
+        %tr{id: "sim-#{simu.id}"}
           %td
             Hace
             = time_ago_in_words simu.created_at
@@ -33,4 +34,7 @@
             = simu.percentage
             \%
           %td
+            = simu.reqs_per_second.to_i
+          %td
             = link_to("Ver", simulation_path(simu), class: "btn btn-mini btn-primary")
+            = link_to("Eliminar", simulation_path(simu), class: "btn btn-mini btn-danger", remote: :true, method: :delete, prompt: "Seguro de que desea eliminar esta simulación?")

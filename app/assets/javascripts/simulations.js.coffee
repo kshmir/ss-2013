@@ -6,26 +6,27 @@
 
 control =
     init: ()->
-	$("#speed_slider").slider 
-        min: 0.01
-        max: 2
-        step: 0.001
-        slide: (event, ui)->
-            if (ui.value > 0)
-                document.global_timeline.timeScale(ui.value)
-    $("#timeline_slider").slider 
-        min: 0
-        max: 100
-        step: 0.1
-        slide: (event, ui)->
-            document.global_timeline.progress(ui.value / 100.0)
-	$("#start_btn").on "click", ()->
-	    document.global_timeline.resume()
-	$("#pause_btn").on "click", ()->
-	    document.global_timeline.pause()
+        $(".js-1-times").on "click", ()->
+            global_timeline.timeScale(1)
+        $(".js-20-times").on "click", ()->
+            global_timeline.timeScale(1 * 20)
+        $(".js-100-times").on "click", ()->
+            global_timeline.timeScale(1 * 100)
+        $(".js-1000-times").on "click", ()->
+            global_timeline.timeScale(1 * 1000)
+        $("#start_btn").on "click", ()->
+            global_timeline.resume()
+        $("#pause_btn").on "click", ()->
+            global_timeline.pause()
+
+        $time = $(".js-time")
+        setInterval(()->
+            if (global_timeline)
+                $time.text((global_timeline.time() / 1000).toFixed(3) + "s")
+        , 10)
 
 
-landing = 
+landing =
     init: ()->
         $(".js-simulation-toggle").on "click", ()->
             $(this).slideUp "slow", ()->
@@ -34,27 +35,28 @@ landing =
                 $(".simulation-form").slideDown "slow"
 
 
-simulator = 
+simulator =
     init: ()->
         $(".anim-loading").removeClass("hidden")
-        percentage = simulator.percentage = $(".js-simulation").data("percentage") 
+        percentage = simulator.percentage = $(".js-simulation").data("percentage")
         if (parseInt(percentage) < 100.0)
             simulator.ui.status_updater()
         else
             simulator.ui.toggle_screen()
-    ui: 
+    ui:
         status_updater: ()->
             id = $(".js-simulation").attr "data-id"
-            $.getJSON("/simulations/#{id}.json",(data)->
-                $(".js-simulation").removeClass("hidden")
+            if id
+                $.getJSON "/simulations/#{id}.json?status=true",(data)->
+                    $(".js-simulation").removeClass("hidden")
+
+                    simulator.percentage = perc = data.percentage
+                    $(".bar").css("width", "#{perc}%")
+                    if (parseInt(perc) < 100.0)
+                        setTimeout(simulator.ui.status_updater,100)
+                    else
+                        simulator.ui.toggle_screen()
                 
-                simulator.percentage = perc = data.percentage
-                $(".bar").css("width", "#{perc}%")
-                if (parseInt(perc) < 100.0)
-                    setTimeout(simulator.ui.status_updater,100)
-                else
-                    simulator.ui.toggle_screen()
-            )
         toggle_screen: ()->
             $(".js-simulation").addClass("hidden")
             simulator.ui.animation()
@@ -62,26 +64,33 @@ simulator =
 
         animation: ()->
             id = $(".js-simulation").attr "data-id"
-            $.getJSON "/simulations/#{id}.json",(data)->
-                $(".anim-loading").addClass("hidden")  
-                $(".js-simview").removeClass("hidden")
-                setup(parseInt($(".js-simulation").data("clients")))
-                anims = {}
-                if (data.stats)
-                    for stat in data.stats
-                        if (stat.event.event_type == "routing")
-                            anims[stat.event.req] = {}
-                            anims[stat.event.req].dyno = stat.event.dyno;
-                            anims[stat.event.req].start_time = stat.time / 100;
-                        else if (stat.event.event_type == "exit")
-                            anims[stat.event.req].end_time = stat.time / 100;
-                            anims[stat.event.req].total_time = anims[stat.event.req].end_time - anims[stat.event.req].start_time;
-                    for req, event of anims
-                        createAnimation(req)
-                        anim_fromRouterToDyno(req, event.dyno, event.start_time, event.total_time)
-                        anim_leaveDyno(req, event.dyno)     
-                
-                
+            if id
+                $.getJSON "/simulations/#{id}.json",(data)->
+                    $(".anim-loading").addClass("hidden")
+                    $(".js-simview").removeClass("hidden")
+                    setup(parseInt($(".js-simulation").data("clients")))
+                    anims = {}
+                    if (data.stats)
+                        for stat in data.stats
+                            if (stat.event.event_type == "routing")
+                                anims[stat.event.req] = {}
+                                anims[stat.event.req].dyno = stat.event.dyno;
+                                anims[stat.event.req].start_time = stat.time;
+                            else if (stat.event.event_type == "exit")
+                                anims[stat.event.req].end_time = stat.time;
+                                anims[stat.event.req].total_time = anims[stat.event.req].end_time - anims[stat.event.req].start_time;
+                            else if (stat.event.event_type == "rejection")
+                                anims[stat.event.req] = {}
+                                anims[stat.event.req].start_time = stat.time;
+                        for req, event of anims
+                            createAnimation(req)
+                            if event.dyno != undefined
+                                anim_fromRouterToDyno(req, event.dyno, event.start_time, event.total_time)
+                                debugger
+                                anim_leaveDyno(req, event.dyno)
+                            else
+                                anim_fromRouterToExit(req, event.start_time)
+                        $(".js-total-time").text((global_timeline.totalDuration() / 1000.0).toFixed(3) + "s")
 
 
 landing.init()
