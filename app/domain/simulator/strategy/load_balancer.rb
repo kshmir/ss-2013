@@ -33,7 +33,6 @@ module Simulator
 					req = dyno_to_consider.finish_request
 					stats <<  { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
 					@results[:durations] << req.beginning_of_processing_time - req.enter_into_router_time
-					stats += dispatch_queue
 				else
 					@t = @next_arrival_time
 					req = Request.new @t
@@ -41,7 +40,6 @@ module Simulator
 						@router.queue << req
 						stats << { time: @t, event: { event_type: :arrival, req: req.id } }
 						@accepted += 1
-						stats += dispatch_queue
 					else
 						stats << { time: @t, event: { event_type: :rejection, req: req.id } }
 						@rejected += 1
@@ -50,6 +48,7 @@ module Simulator
 					@next_arrival_time = @t + interarrival_time
 					@current_iteration += 1
 				end
+				stats += dispatch_queue
 				@clients.each_index { |idyno| @results[:queue_lengths][idyno] += @clients[idyno].queue.length }
 
 				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?

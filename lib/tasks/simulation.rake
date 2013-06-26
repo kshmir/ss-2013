@@ -10,7 +10,7 @@ namespace :simulation do
 			results[clients] = {}
 			reqs_per_sec.each do |reqs|
 				params[:input_variables] = {clients_limit: clients, max_amount_of_iterations: ENV["iterations"], reqs_per_second: reqs};
-				algo = "Simulator::Strategy::Algorithm::#{ENV["algorithme"]}".constantize }
+				algo = "Simulator::Strategy::Algorithm::#{ENV["algorithme"]}".constantize
 				s = Simulator::Strategy::LoadBalancer.with_algorithm algo, params
 
 				results[clients][reqs] = Simulator::Core.simulate s

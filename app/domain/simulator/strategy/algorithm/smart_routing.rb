@@ -8,7 +8,6 @@ module Simulator
 				end
 
 				def compute
-					
 					available_clients = @clients.select { |dyno| dyno.idle? }.shuffle
 					if available_clients.empty?
 						client = nil
