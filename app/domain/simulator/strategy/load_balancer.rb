@@ -64,8 +64,8 @@ module Simulator
 					@t = dyno.endtime
 					req = get_dyno_by_next_exit_time.finish_request
 					stats += dispatch_queue
-					@clients.each { |dyno| @results[:queue_length] += dyno.queue.length }
 					stats << { time: @t, event: { event_type: :exit, req: req.id, dyno: req.dyno } }
+					@clients.each_index { |idyno| @results[:queue_lengths][idyno] += @clients[idyno].queue.length }
 					@results[:durations] << req.beginning_of_processing_time - req.enter_into_router_time
 				end
 				@results[:idle_times] = @clients.map { |dyno| dyno.cumulative_idle_time @t }
@@ -105,7 +105,7 @@ module Simulator
 				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit}) )}
 				@algorithm = control_functions[:algorithm].send :new, @clients
 
-				@results = {idle_times: [], durations: [], consolidated: {} }
+				@results = {idle_times: [], durations: [], queue_lengths: @clients.map { |d| 0.0 }, consolidated: {} }
 			end
 
 
