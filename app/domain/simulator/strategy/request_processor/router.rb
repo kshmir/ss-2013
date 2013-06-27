@@ -5,7 +5,7 @@ module Simulator
 			class Router < RequestProcessor::Base
 				def initialize params = {}
 					super params
-					@queue_limit ||= 50
+					@queue_limit ||= 5000
 				end				
 			end
 

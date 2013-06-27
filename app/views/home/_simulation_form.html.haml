@@ -28,7 +28,8 @@
 						= f.select :clients_to, (5..100).step(5).to_a
 						= f.select :iterations, (50..5000).step(50).to_a
 						= f.select :reqs_per_second_from, (1..300).step(1).to_a
-						= f.select :reqs_per_second_interval, [1, (5..100).step(5).to_a]
+						= f.select :reqs_per_second_interval, [1, (5..100).step(5).to_a].flatten
 						= f.select :reqs_per_second_to, (1..300).step(1).to_a
+						= f.select :amount_of_tests, (1..100).step(1).to_a
 						= f.actions do
 							= f.submit "Nueva Comparación", class: "btn btn-primary"

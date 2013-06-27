@@ -8,7 +8,8 @@ class ComparisonsController < ApplicationController
 		unless [clients_interval.size, reqs_interval.size].min > 1
 			@comp = Comparison.new iterations: iters, reqs_per_second: reqs_interval.join(","),
 													 clients: clients_interval.join(","),
-													 strategies: strats.join(",")
+													 strategies: strats.join(","),
+													 amount_of_tests: params[:comparison][:amount_of_tests]
 			@comp.save	
 		end
 		respond_to :js
@@ -27,7 +28,7 @@ class ComparisonsController < ApplicationController
 			f.html
 			f.json {
 				unless params[:status]
-					render :text => { results: @comp.results }.to_json
+					render :text => { results: @comp.results, criteria: @comp.criteria }.to_json
 				else
 					render :text => { percentage: @comp.percentage, total: @comp.amount_total.value, amount: @comp.amount_completed.value }.to_json
 				end

@@ -129,6 +129,7 @@ simulator =
 comparison =
     init: ()->
         if $(".js-comparison")
+            comparison.bind_filters()
             $(".anim-loading").removeClass("hidden")
             percentage = comparison.percentage = $(".js-comparison").data("percentage")
             if (parseInt(percentage) < 100.0)
@@ -153,15 +154,150 @@ comparison =
         toggle_screen: ()->
             $(".js-comparison").addClass("hidden")
             comparison.ui.panel()
+
+        prepare_data: ()->
+            random         = []
+            round_robin    = []
+            shortest_queue = []
+            smart_routing  = []
+            for result in comparison.results
+                switch result.strategy
+                    when "Round Robin" then round_robin.push(result)
+                    when "Random" then random.push(result)
+                    when "Smart" then smart_routing.push(result)
+                    when "Shortest Queue" then shortest_queue.push(result)
+
+            sorter = (array)->
+                crit = comparison.criteria
+                _.sortBy(array, (i1)-> i1[crit])
+
+            random = sorter(random)
+            round_robin = sorter(round_robin)
+            smart_routing = sorter(smart_routing)
+            shortest_queue = sorter(shortest_queue)
+
+            printer = (array)->
+                crit = comparison.criteria
+                a = []
+                for simu in array
+                    res = simu.results
+                    a.push("#{simu[crit]} #{res.mean_duration} #{res.std_dev_duration} #{res.mean_queue_length} #{res.std_dev_queue_length} #{res.mean_idle_time} #{res.std_dev_idle_time}")
+                a.join("\n")
+
+            data = 
+                random: printer(random)
+                round_robin: printer(round_robin)
+                smart_routing: printer(smart_routing)
+                shortest_queue: printer(shortest_queue)
+
+        plot: (selected_strategies, value)->
+            print_to_image = (e)->
+                    comparison.plotter.getFile "out.svg", (e) ->
+                        unless e.content
+                          alert "Output file out.svg not found!"
+                          return
+                        img = document.getElementById("result")
+                        try
+                          ab = new Uint8Array(e.content)
+                          blob = new Blob([ab],
+                            type: "image/svg+xml"
+                          )
+                          window.URL = window.URL or window.webkitURL
+                          img.src = window.URL.createObjectURL(blob)
+                        catch err # in case blob / URL missing, fallback to data-uri
+                          rstr = ""
+                          i = 0
+
+                          while i < e.content.length
+                            rstr += String.fromCharCode(e.content[i])
+                            i++
+                          img.src = "data:image/svg+xml;base64," + btoa(rstr)
+
+            places = []
+            switch value
+                when "duration" then places = [2,3]
+                when "queue" then places = [4,5]
+                when "idle" then places = [6,7]
+
+            fit_funct = ()->
+                arr = []
+                arr.push("fit f(x) 'RandomRouting.plot' u 1:#{places[0]} via a,b") if _.contains(selected_strategies, "Random")
+                arr.push("fit g(x) 'RoundRobinRouting.plot' u 1:#{places[0]} via c,d") if _.contains(selected_strategies, "Round Robin")
+                arr.push("fit h(x) 'ShortestQueueRouting.plot' u 1:#{places[0]} via e,f") if _.contains(selected_strategies, "Shortest Queue")
+                arr.push("fit i(x) 'SmartRouting.plot' u 1:#{places[0]} via g,h") if _.contains(selected_strategies, "Smart")
+                arr.join("\n")
+
+            draw_funct = ()->
+                arr = []
+                arr.push("'RandomRouting.plot' using 1:#{places[0]}:#{places[1]} w yerrorlines") if _.contains(selected_strategies, "Random")
+                arr.push("'RoundRobinRouting.plot' using 1:#{places[0]}:#{places[1]} w yerrorlines") if _.contains(selected_strategies, "Round Robin")
+                arr.push("'ShortestQueueRouting.plot' using 1:#{places[0]}:#{places[1]} w yerrorlines") if _.contains(selected_strategies, "Shortest Queue")
+                arr.push("'SmartRouting.plot' using 1:#{places[0]}:#{places[1]} w yerrorlines") if _.contains(selected_strategies, "Smart")
+                arr.join(", ")
+
+            gnuplot = comparison.plotter
+
+            gnuplot.run """
+                        set terminal svg enhanced size #{comparison.image_size[0]},#{comparison.image_size[1]}
+                        set output 'out.svg'
+                        set format cb "%4.1f"
+                        
+                        set title "Average idle time"
+
+                        f(x) = a*x+b
+                        g(x) = c*x+d
+                        h(x) = e*x+f
+                        i(x) = g*x+h
+
+                        
+
+                        plot #{draw_funct()}
+                    """, print_to_image
+                        
+
         panel: ()->
             id = $(".js-comparison").attr "data-id"
             if id
                 $.getJSON "/comparisons/#{id}.json", (data)->
+                    comparison.image_size = [
+                        $("#result").parents(".span12").width(), $(window).height() - 160
+                    ]
+                    comparison.criteria = data.criteria
                     comparison.results = eval(data.results)
                     $(".anim-loading").addClass("hidden")
                     $(".js-compview").removeClass("hidden")
                     
+                    data = comparison.data =  comparison.ui.prepare_data()
 
+                    comparison.plotter = new Gnuplot("/assets/gnuplot.js")
+                    comparison.plotter.putFile("RandomRouting.plot", data.random);
+                    comparison.plotter.putFile("RoundRobinRouting.plot", data.round_robin);
+                    comparison.plotter.putFile("ShortestQueueRouting.plot", data.shortest_queue);
+                    comparison.plotter.putFile("SmartRouting.plot", data.smart_routing);
+
+                    comparison.ui.plot(comparison.strategies(), comparison.variable())
+    strategies: ()->
+        _.map($(".js-strategy-cmp .active"), (item)-> $(item).text())
+    variable: ()->
+        $(".js-variable-cmp .active").data("variable")
+    bind_filters: ()->
+        $(".js-strategy-cmp .btn").on "click", ()-> 
+            $(this).toggleClass("active")
+            if (comparison.data)
+                comparison.ui.plot(comparison.strategies(), comparison.variable())
+        $(".js-variable-cmp .btn").on "click", ()-> 
+            $(".js-variable-cmp .btn").removeClass("active")
+            $(this).addClass("active")
+            if (comparison.data)
+                comparison.ui.plot(comparison.strategies(), comparison.variable())
+        
+            
+                     
+                      
+
+
+
+plot = undefined;
 
 landing.init()
 simulator.init()
