@@ -192,14 +192,22 @@ comparison =
                 shortest_queue: printer(shortest_queue)
 
         plot: (selected_strategies, value)->
+            $(".anim-loading").removeClass("hidden")
             print_to_image = (e)->
+                    $(".anim-loading").addClass("hidden")
                     comparison.plotter.getFile "out.svg", (e) ->
-                        unless e.content
-                          alert "Output file out.svg not found!"
+                        unless e.content || e.content.length == 0
+                          alert "Error al graficar"
+                          $(".anim-loading").removeClass("hidden")
                           return
                         img = document.getElementById("result")
                         try
                           ab = new Uint8Array(e.content)
+                          if e.content.length == 0
+                            alert("Hubo un error, elija otros parámetros")
+                            # $(".anim-loading").removeClass("hidden")
+                            return
+
                           blob = new Blob([ab],
                             type: "image/svg+xml"
                           )
@@ -236,6 +244,18 @@ comparison =
                 arr.push("'SmartRouting.plot' using 1:#{places[0]}:#{places[1]} w yerrorlines") if _.contains(selected_strategies, "Smart")
                 arr.join(", ")
 
+            xlabel = () ->
+                if comparison.criteria == "clients"
+                    "Servidores"
+                else
+                    "Peticiones por segundo"
+
+            ylabel = () ->
+                switch value
+                    when "duration" then "Duración promedio (ms)"
+                    when "queue" then "Tiempo ocioso promedio (ms)"
+                    when "idle" then "Tamaño de cola (pedidos)"
+
             gnuplot = comparison.plotter
 
             gnuplot.run """
@@ -243,7 +263,10 @@ comparison =
                         set output 'out.svg'
                         set format cb "%4.1f"
                         
-                        set title "Average idle time"
+                        set title "Comparación de resultados"
+
+                        set xlabel "#{xlabel()}"
+                        set ylabel "#{ylabel()}"
 
                         f(x) = a*x+b
                         g(x) = c*x+d
@@ -265,12 +288,17 @@ comparison =
                     ]
                     comparison.criteria = data.criteria
                     comparison.results = eval(data.results)
-                    $(".anim-loading").addClass("hidden")
+                    
                     $(".js-compview").removeClass("hidden")
                     
                     data = comparison.data =  comparison.ui.prepare_data()
 
                     comparison.plotter = new Gnuplot("/assets/gnuplot.js")
+
+                    comparison.plotter.onError = (error)->
+                        alert("Hubo un error, elija otros parámetros")
+                        $(".anim-loading").removeClass("hidden")
+
                     comparison.plotter.putFile("RandomRouting.plot", data.random);
                     comparison.plotter.putFile("RoundRobinRouting.plot", data.round_robin);
                     comparison.plotter.putFile("ShortestQueueRouting.plot", data.shortest_queue);
