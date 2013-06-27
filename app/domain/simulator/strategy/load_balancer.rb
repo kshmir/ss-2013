@@ -75,7 +75,9 @@ module Simulator
 				@results[:consolidated][:std_dev_queue_length] = @results[:queue_lengths].standard_deviation
 				@results[:consolidated][:std_dev_idle_time]	= @results[:idle_times].standard_deviation
 				@results[:consolidated][:std_dev_duration]	= @results[:durations].standard_deviation
-				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?
+				@results[:consolidated][:rejected] = @rejected; 
+				@results[:consolidated][:accepted] = @accepted; 
+				yield(@current_iteration, @max_amount_of_iterations, stats, @results[:consolidated]) if block_given?
 				@results[:consolidated]
 			end
 

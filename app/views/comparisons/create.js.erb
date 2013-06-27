@@ -1,0 +1,5 @@
+<% if @comp %>
+document.location = "<%= comparison_path(@comp)%>";
+<% else %>
+alert("Parámetros inválidos... recuerde que sólo se puede comparar en base a una variable (cantidad de dynos o cantidad de pedidos)")
+<% end %>

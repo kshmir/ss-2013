@@ -1,8 +1,9 @@
 class SimulationsController < ApplicationController
 	def create
 		@sim = Simulation.new params[:simulation]
-		@sim.percentage = 0.0
 		@sim.save
+		@sim.perc = 0.0
+		
 
 		Resque.enqueue SimWorker, @sim.id
 		respond_to :js
@@ -19,7 +20,7 @@ class SimulationsController < ApplicationController
 			f.html
 			f.json {
 				unless params[:status]
-					render :text => @sim.to_json(methods: :stats)
+					render :text => @sim.to_json(methods: [:json, :results, :percentage])
 				else
 					render :text => @sim.to_json
 				end

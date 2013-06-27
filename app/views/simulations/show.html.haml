@@ -11,9 +11,10 @@
       %a.js-anim-toggle{:href => "#"} Animación
     %li
       %a.js-result-toggle{:href => "#"} Resultados
-    %li
-      %a.js-graph-toggle{:href => "#"} Gráficos
+    / %li
+    /   %a.js-graph-toggle{:href => "#"} Gráficos
   .js-sim-tab.tab
     = render(:partial => "animation")
-  .js-result-tab.tab
+  .js-result-tab.tab.hidden
+    = render(:partial => "results")
   .js-graph-tab.tab

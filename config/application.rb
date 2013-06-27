@@ -59,5 +59,9 @@ module Ss
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    config.after_initialize do 
+        ActiveRecord::Base.logger.level = 1
+    end
   end
 end

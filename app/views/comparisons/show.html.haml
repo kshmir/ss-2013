@@ -1,0 +1,15 @@
+.js-comparison.hidden{ "data-id" => @comp.id, "data-percentage" => @comp.percentage }
+  %h3
+    Simulando...
+    (
+    %span.amount
+    de
+    %span.total
+    )
+  .progress.progress-striped.active
+    .bar{ :style => "width:#{@comp.percentage}%"}
+
+.anim-loading.hidden
+.js-compview.hidden
+  .js-sim-tab.tab
+  

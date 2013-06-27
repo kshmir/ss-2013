@@ -1,15 +1,22 @@
 class Simulation < ActiveRecord::Base
+	include Redis::Objects
 	attr_accessible :ended_at, :created_at, 
-									:percentage, :strategy, 
+									:strategy, 
 									:clients, :iterations, 
-									:reqs_per_second
+									:reqs_per_second, :hidden
 
 	serialize :content
 
-	include Redis::Objects
+	value :perc
+	
+	def percentage
+		perc.value
+	end
 
 	list :stats, marshal: true
-	list :stats_json
+	value :stats_json
+
+	value :results, marshal: true
 
 	def json
 		stats_json ||= stats.to_json

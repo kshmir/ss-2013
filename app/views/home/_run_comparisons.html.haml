@@ -1,0 +1,32 @@
+%h3
+  Historial de comparaciones.
+
+- if !@comparisons || @comparisons.empty?
+  No hay simulaciones hechas todavía. 
+- else
+  %table.table.table-bordered.table-striped
+    %thead
+      %tr
+        %th Corridas
+        %th Dynos
+        %th Estrategias
+        %th Pedidos por Segundo
+        %th &nbsp;
+    %tbody
+      - @comparisons.each do |comp|
+        %tr{id: "comp-#{comp.id}"}
+          %td
+            = comp.amount_total.value
+          %td
+            = comp.clients.split(",").first
+            a
+            = comp.clients.split(",").last
+          %td
+            = comp.strategies.split(",").join(" - ")
+          %td
+            = comp.reqs_per_second.split(",").first
+            a
+            = comp.reqs_per_second.split(",").last
+          %td
+            = link_to("Ver", comparison_path(comp), class: "btn btn-mini btn-primary")
+            = link_to("Eliminar", comparison_path(comp), class: "btn btn-mini btn-danger", remote: :true, method: :delete, prompt: "Seguro de que desea eliminar esta comparación?")

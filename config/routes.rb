@@ -3,6 +3,7 @@ Ss::Application.routes.draw do
   # first created -> highest priority.
 
   resources :simulations
+  resources :comparisons
 
   # Sample of regular route:
   #   match 'products/:id' => 'catalog#view'
