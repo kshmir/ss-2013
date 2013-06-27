@@ -11,10 +11,10 @@
 			.offset3.span6
 				.well
 					= bootstrap_form_for Simulation.new, remote: true, html: { class: "form-horizontal" }  do |f|
-						= f.select :strategy, ["Random", "Smart", "Round Robin", "Shortest Queue"]
-						= f.select :clients, (5..70).step(5).to_a
-						= f.select :iterations, (50..5000).step(50).to_a
-						= f.select :reqs_per_second, (1..300).step(1).to_a
+						= f.select :strategy, ["Random", "Smart", "Round Robin", "Shortest Queue"], label: "Estrategia"
+						= f.select :clients, (5..500).step(5).to_a, label: "Servidores"
+						= f.select :iterations, [100, (250..25000).step(250).to_a].flatten, label: "Iteraciones"
+						= f.select :reqs_per_second, (10..3000).step(5).to_a, label: "Pedidos por Segundo"
 						= f.actions do
 							= f.submit "Nueva Simulación", class: "btn btn-danger"
 	.comparison-form.hidden
@@ -22,14 +22,14 @@
 			.offset3.span6
 				.well
 					= bootstrap_form_for Comparison.new, remote: true, html: { class: "form-horizontal" }  do |f|
-						= f.select :strategies,  options_for_select(["Random", "Smart", "Round Robin", "Shortest Queue"], ["Random", "Smart", "Round Robin", "Shortest Queue"]), {} , { multiple: true }
-						= f.select :clients_from, (5..100).step(5).to_a
-						= f.select :clients_interval, [1, (5..25).step(5).to_a].flatten
-						= f.select :clients_to, (5..100).step(5).to_a
-						= f.select :iterations, (50..5000).step(50).to_a
-						= f.select :reqs_per_second_from, (1..300).step(1).to_a
-						= f.select :reqs_per_second_interval, [1, (5..100).step(5).to_a].flatten
-						= f.select :reqs_per_second_to, (1..300).step(1).to_a
-						= f.select :amount_of_tests, (1..100).step(1).to_a
+						= f.select :strategies,  options_for_select(["Random", "Smart", "Round Robin", "Shortest Queue"], ["Random", "Smart", "Round Robin", "Shortest Queue"]), { label: "Estrategias" } , { multiple: true }
+						= f.select :clients_from, (5..100).step(5).to_a, label: "Servidores desde"
+						= f.select :clients_interval, [1, (5..25).step(5).to_a].flatten, label: "Paso de servidores"
+						= f.select :clients_to, (5..100).step(5).to_a, label: "Servidores hasta"
+						= f.select :iterations, (50..5000).step(50).to_a, label: "Cantidad de iteraciones"
+						= f.select :reqs_per_second_from, (1..300).step(1).to_a, label: "Peticiones por segundo desde"
+						= f.select :reqs_per_second_interval, [1, (5..100).step(5).to_a].flatten, label: "Paso de peticiones por segundo"
+						= f.select :reqs_per_second_to, (1..300).step(1).to_a, label: "Peticiones por segundo hasta"
+						= f.select :amount_of_tests, (1..100).step(1).to_a, label: "Cantidad de pruebas"
 						= f.actions do
 							= f.submit "Nueva Comparación", class: "btn btn-primary"
