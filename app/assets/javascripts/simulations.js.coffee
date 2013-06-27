@@ -277,6 +277,12 @@ comparison =
                     comparison.plotter.putFile("SmartRouting.plot", data.smart_routing);
 
                     comparison.ui.plot(comparison.strategies(), comparison.variable())
+                    $(".random-results").text(data.random)
+                    $(".round_robin-results").text(data.round_robin)
+                    $(".shortest_queue-results").text(data.shortest_queue)
+                    $(".smart-results").text(data.smart_routing)
+
+
     strategies: ()->
         _.map($(".js-strategy-cmp .active"), (item)-> $(item).text())
     variable: ()->
