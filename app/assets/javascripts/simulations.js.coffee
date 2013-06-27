@@ -115,6 +115,7 @@ simulator =
                                 anim_fromRouterToExit(req, event.start_time)
                         $(".js-total-time").text((global_timeline.totalDuration() / 1000.0).toFixed(3) + "s")
                     if (data.results)
+                        $(".router-queue-length").text("#{data.results.router_queue_length.toFixed(3)}")
                         $(".mean-queue-length").text("#{data.results.mean_queue_length.toFixed(3)}")
                         $(".std-dev-queue-length").text("#{data.results.std_dev_queue_length.toFixed(3)}")
                         $(".mean-idle-time").text("#{data.results.mean_idle_time.toFixed(3)}ms")

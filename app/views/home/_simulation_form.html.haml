@@ -12,7 +12,7 @@
 				.well
 					= bootstrap_form_for Simulation.new, remote: true, html: { class: "form-horizontal" }  do |f|
 						= f.select :strategy, ["Random", "Smart", "Round Robin", "Shortest Queue"]
-						= f.select :clients, (5..50).step(5).to_a
+						= f.select :clients, (5..70).step(5).to_a
 						= f.select :iterations, (50..5000).step(50).to_a
 						= f.select :reqs_per_second, (1..300).step(1).to_a
 						= f.actions do
