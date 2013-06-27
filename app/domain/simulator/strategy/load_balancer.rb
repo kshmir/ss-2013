@@ -50,6 +50,7 @@ module Simulator
 				end
 				stats += dispatch_queue
 				@clients.each_index { |idyno| @results[:queue_lengths][idyno] += @clients[idyno].queue.length }
+				@results[:consolidated][:router_queue_length] += @router.queue.length
 
 				yield(@current_iteration, @max_amount_of_iterations, stats) if block_given?
 			end
@@ -69,6 +70,7 @@ module Simulator
 				end
 				@results[:idle_times] = @clients.map { |dyno| dyno.cumulative_idle_time @t }
 				@clients.each_index { |idyno| @results[:queue_lengths][idyno] /= @max_amount_of_iterations }
+				@results[:consolidated][:router_queue_length] /= @max_amount_of_iterations
 				@results[:consolidated][:mean_queue_length] = @results[:queue_lengths].mean
 				@results[:consolidated][:mean_idle_time]	= @results[:idle_times].mean
 				@results[:consolidated][:mean_duration]		= @results[:durations].mean
@@ -106,7 +108,7 @@ module Simulator
 				@clients = (1..@clients_limit).map { Simulator::Strategy::RequestProcessor::Client.new( params.merge!({exit_time_generator: @next_exit}) )}
 				@algorithm = control_functions[:algorithm].send :new, @clients
 
-				@results = {idle_times: [], durations: [], queue_lengths: @clients.map { |d| 0.0 }, consolidated: {} }
+				@results = {idle_times: [], durations: [], queue_lengths: @clients.map { |d| 0.0 }, consolidated: {router_queue_length: 0.0} }
 			end
 
 
