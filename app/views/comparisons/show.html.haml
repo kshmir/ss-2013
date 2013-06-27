@@ -11,23 +11,14 @@
 
 .anim-loading.hidden
 .js-compview.hidden
-  %img#result
-  .row-fluid.js-comp-controls
-    .span12.well.well-small
-      .row-fluid
-        .span5
-          Analizar:
-          .btn-group.js-variable-cmp
-            %button.btn.btn-mini.active{ "data-variable" => "queue" } Tamaño de Cola
-            %button.btn.btn-mini{ "data-variable" => "idle" } Tiempo ocioso promedio
-            %button.btn.btn-mini{ "data-variable" => "duration" } Duración promedio
-        .span5
-          Comparar:
-          .btn-group.js-strategy-cmp
-            %button.btn.btn-mini.active Shortest Queue
-            %button.btn.btn-mini.active Round Robin
-            %button.btn.btn-mini.active Smart
-            %button.btn.btn-mini.active Random
-
+  %ul.nav.nav-pills
+    %li.active
+      %a.js-graph-toggle{:href => "#"} Gráfico
+    %li
+      %a.js-result-toggle{:href => "#"} Resultados
+  .js-graph-tab.tab
+    = render(:partial => "graph")
+  .js-result-tab.tab.hidden
+    = render(:partial => "results")
 
 
