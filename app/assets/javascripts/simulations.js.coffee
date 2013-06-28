@@ -156,7 +156,7 @@ comparison =
             $(".js-comparison").addClass("hidden")
             comparison.ui.panel()
 
-        prepare_data: ()->
+        prepare_data: (usage = "print")->
             random         = []
             round_robin    = []
             shortest_queue = []
@@ -185,11 +185,34 @@ comparison =
                     a.push("#{simu[crit]} #{res.mean_duration} #{res.std_dev_duration} #{res.mean_queue_length} #{res.std_dev_queue_length} #{res.mean_idle_time} #{res.std_dev_idle_time}")
                 a.join("\n")
 
-            data = 
-                random: printer(random)
-                round_robin: printer(round_robin)
-                smart_routing: printer(smart_routing)
-                shortest_queue: printer(shortest_queue)
+
+            displayer = (array)->
+                crit = comparison.criteria
+                a = []
+                for simu in array
+                    res = simu.results
+                    a.push("<tr><td>#{simu[crit]}</td><td>#{res.mean_duration.toFixed(2)}</td><td>#{res.std_dev_duration.toFixed(2)}</td><td>#{res.mean_queue_length.toFixed(2)}</td><td>#{res.std_dev_queue_length.toFixed(2)}</td><td>#{res.mean_idle_time.toFixed(2)}</td><td>#{res.std_dev_idle_time.toFixed(2)}</td></tr>")
+                if a.length == 0 then null else a.join("\n")
+
+
+            if (usage == "display")
+                crit = switch comparison.criteria
+                    when "clients" then "Clientes"
+                    else comparison.criteria
+                data = 
+                    header: "<tr><th>#{crit}</th><th>Duración promedio de ruteo de un pedido</th><th>Desvío estándar en el duración de ruteo</th><th>Tamaño promedio de cola de servidores</th><th>Desvío estándar de tamaño de cola de servidores</th><th>Tiempo ocioso promedio de servidores</th><th>Desvío estándar de tiempo ocioso de los servidores</th></tr>"
+                    random: displayer(random)
+                    round_robin: displayer(round_robin)
+                    smart_routing: displayer(smart_routing)
+                    shortest_queue: displayer(shortest_queue)
+            else
+                data = 
+                    random: printer(random)
+                    round_robin: printer(round_robin)
+                    smart_routing: printer(smart_routing)
+                    shortest_queue: printer(shortest_queue)
+            data
+
 
         plot: (selected_strategies, value)->
             print_to_image = (e)->
@@ -267,8 +290,9 @@ comparison =
                     comparison.results = eval(data.results)
                     $(".anim-loading").addClass("hidden")
                     $(".js-compview").removeClass("hidden")
-                    
-                    data = comparison.data =  comparison.ui.prepare_data()
+                   
+                    data_display = comparison.ui.prepare_data("display")
+                    data = comparison.data =  comparison.ui.prepare_data("print")
 
                     comparison.plotter = new Gnuplot("/assets/gnuplot.js")
                     comparison.plotter.putFile("RandomRouting.plot", data.random);
@@ -277,10 +301,23 @@ comparison =
                     comparison.plotter.putFile("SmartRouting.plot", data.smart_routing);
 
                     comparison.ui.plot(comparison.strategies(), comparison.variable())
-                    $(".random-results").text(data.random)
-                    $(".round_robin-results").text(data.round_robin)
-                    $(".shortest_queue-results").text(data.shortest_queue)
-                    $(".smart-results").text(data.smart_routing)
+                    $(".header-results").append(data_display.header)
+                    if (data_display.random)
+                        $(".random-results").append(data_display.random)
+                    else
+                        $(".random-table").addClass("hidden")
+                    if (data_display.round_robin)
+                        $(".round_robin-results").append(data_display.round_robin)
+                    else
+                        $(".round_robin-table").addClass("hidden")
+                    if (data_display.shortest_queue)
+                        $(".shortest_queue-results").append(data_display.shortest_queue)
+                    else
+                        $(".shortest_queue-table").addClass("hidden")
+                    if (data_display.smart_routing)
+                        $(".smart-results").append(data_display.smart_routing)
+                    else
+                        $(".smart-table").addClass("hidden")
 
 
     strategies: ()->
