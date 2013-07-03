@@ -59,7 +59,7 @@ module Simulator
 				@next_arrival_time = Float::INFINITY
 				stats = []
 				loop do
-					break if @clients.all? { |dyno| dyno.idle? }
+					break if @clients.all? { |dyno| dyno.idle? && @router.is_queue_empty? }
 					dyno = get_dyno_by_next_exit_time
 					@t = dyno.endtime
 					req = get_dyno_by_next_exit_time.finish_request
@@ -120,7 +120,7 @@ module Simulator
 			def dispatch_queue
 				stats = []
 				loop do
-					break if @router.queue.size <= 0
+					break if @router.is_queue_empty?
 					dyno = @algorithm.compute
 					break if dyno.nil?
 					req = @router.queue.shift

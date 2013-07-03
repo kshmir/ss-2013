@@ -51,7 +51,8 @@ function anim_updateRouter(t, val)
 
     if (!router_timeline) {
          router_timeline = new TimelineLite();
-         global_timeline.add(router_timeline, { position: 0 });
+         router_timeline.smoothChildTiming = true;
+	 global_timeline.add(router_timeline, { position: 0 });
     }
     router_timeline.call(
              function() {
