@@ -6,8 +6,8 @@ class Array
 
   def standard_deviation 
     m = mean
-    m2 = (map { |x| (x-m)**2.0 }).mean
-    m2 ** 0.5
+    variance = (map { |x| (x-m)**2.0 }).mean
+    variance ** 0.5
   end
 end
 
@@ -82,6 +82,8 @@ class Comparison < ActiveRecord::Base
       val[:results][:std_dev_queue_length] = old.map { |x| x.value[:mean_queue_length] }.standard_deviation
       val[:results][:mean_idle_time] = old.map { |x| x.value[:mean_idle_time] }.mean
       val[:results][:std_dev_idle_time] = old.map { |x| x.value[:mean_idle_time] }.standard_deviation
+      val[:results][:mean_idle_time_between_dynos] = old.map { |x| x.value[:std_dev_idle_time] }.mean
+      val[:results][:std_dev_idle_time_between_dynos] = old.map { |x| x.value[:std_dev_idle_time] }.standard_deviation
       val[:results][:mean_duration] = old.map { |x| x.value[:mean_duration] }.mean
       val[:results][:std_dev_duration] = old.map { |x| x.value[:mean_duration] }.standard_deviation
       val[:results][:mean_rejected] = old.map { |x| x.value[:rejected] }.mean

@@ -185,7 +185,7 @@ comparison =
                 a = []
                 for simu in array
                     res = simu.results
-                    a.push("#{simu[crit]} #{res.mean_duration} #{res.std_dev_duration} #{res.mean_queue_length} #{res.std_dev_queue_length} #{res.mean_idle_time} #{res.std_dev_idle_time}")
+                    a.push("#{simu[crit]} #{res.mean_duration} #{res.std_dev_duration} #{res.mean_queue_length} #{res.std_dev_queue_length} #{res.mean_idle_time} #{res.std_dev_idle_time} #{res.mean_idle_time_between_dynos} #{res.std_dev_idle_time_between_dynos}")
                 a.join("\n")
 
 
@@ -194,7 +194,7 @@ comparison =
                 a = []
                 for simu in array
                     res = simu.results
-                    a.push("<tr><td>#{simu[crit]}</td><td>#{res.mean_duration.toFixed(2)}</td><td>#{res.std_dev_duration.toFixed(2)}</td><td>#{res.mean_queue_length.toFixed(2)}</td><td>#{res.std_dev_queue_length.toFixed(2)}</td><td>#{res.mean_idle_time.toFixed(2)}</td><td>#{res.std_dev_idle_time.toFixed(2)}</td></tr>")
+                    a.push("<tr><td>#{simu[crit]}</td><td>#{res.mean_duration.toFixed(2)}</td><td>#{res.std_dev_duration.toFixed(2)}</td><td>#{res.mean_queue_length.toFixed(2)}</td><td>#{res.std_dev_queue_length.toFixed(2)}</td><td>#{res.mean_idle_time.toFixed(2)}</td><td>#{res.std_dev_idle_time.toFixed(2)}</td><td>#{res.mean_idle_time_between_dynos.toFixed(2)}</td><td>#{res.std_dev_idle_time_between_dynos.toFixed(2)}</td></tr>")
                 if a.length == 0 then null else a.join("\n")
 
 
@@ -203,7 +203,7 @@ comparison =
                     when "clients" then "Clientes"
                     else comparison.criteria
                 data = 
-                    header: "<tr><th>#{crit}</th><th>Duración promedio de ruteo de un pedido</th><th>Desvío estándar en el duración de ruteo</th><th>Tamaño promedio de cola de servidores</th><th>Desvío estándar de tamaño de cola de servidores</th><th>Ociosidad promedia de servidores</th><th>Desvío estándar de la ociosidad de los servidores</th></tr>"
+                    header: "<tr><th>#{crit}</th><th>Duración promedio de ruteo de un pedido</th><th>Desvío estándar en el duración de ruteo</th><th>Tamaño promedio de cola de servidores</th><th>Desvío estándar de tamaño de cola de servidores</th><th>Ociosidad promedia de servidores</th><th>Desvío estándar de la ociosidad de los servidores</th><th>Desvío estándar entre dynos promedio de la ociosidad</th><th>Desvío estándar del desvío estándar entre dynos de la ociosidad</th></tr>"
                     random: displayer(random)
                     round_robin: displayer(round_robin)
                     smart_routing: displayer(smart_routing)
@@ -246,6 +246,7 @@ comparison =
                 when "duration" then places = [2,3]; title = "Duración promedio"
                 when "queue" then places = [4,5]; title = "Tamaño de cola de servidores promedio"
                 when "idle" then places = [6,7]; title = "Ociosidad de los servidores"
+                when "idle_between_dynos" then places = [8,9]; title = "Desvío entre servidores de la ociosidad"
 
             fit_funct = ()->
                 arr = []
