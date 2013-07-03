@@ -3,6 +3,7 @@ module Simulator
 		module RequestProcessor
 
 			class Router < RequestProcessor::Base
+				attr_reader :queue_limit
 				def initialize params = {}
 					super params
 					@queue_limit ||= 5000

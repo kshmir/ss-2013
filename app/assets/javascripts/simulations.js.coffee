@@ -96,10 +96,13 @@ simulator =
                     data.stats = eval(data.json)
                     if (data.stats)
                         for stat in data.stats
-                            if (stat.event.event_type == "routing")
+                            if (stat.event.event_type == "arrival")
+                                anim_updateRouter(stat.time, stat.router_queue_length);
+                            else if (stat.event.event_type == "routing")
                                 anims[stat.event.req] = {}
                                 anims[stat.event.req].dyno = stat.event.dyno;
                                 anims[stat.event.req].start_time = stat.time;
+                                anim_updateRouter(stat.time, stat.router_queue_length);
                             else if (stat.event.event_type == "exit")
                                 anims[stat.event.req].end_time = stat.time;
                                 anims[stat.event.req].total_time = anims[stat.event.req].end_time - anims[stat.event.req].start_time;
@@ -118,8 +121,8 @@ simulator =
                         $(".router-queue-length").text("#{data.results.router_queue_length.toFixed(3)}")
                         $(".mean-queue-length").text("#{data.results.mean_queue_length.toFixed(3)}")
                         $(".std-dev-queue-length").text("#{data.results.std_dev_queue_length.toFixed(3)}")
-                        $(".mean-idle-time").text("#{data.results.mean_idle_time.toFixed(3)}ms")
-                        $(".std-dev-idle-time").text("#{data.results.std_dev_idle_time.toFixed(3)}ms")
+                        $(".mean-idle-time").text("#{data.results.mean_idle_time.toFixed(3)}%")
+                        $(".std-dev-idle-time").text("#{data.results.std_dev_idle_time.toFixed(3)}%")
                         $(".mean-duration").text("#{data.results.mean_duration.toFixed(3)}ms")
                         $(".std-dev-duration").text("#{data.results.std_dev_duration.toFixed(3)}ms")
                         $(".total").text("#{data.results.accepted + data.results.rejected} pedidos")
@@ -200,7 +203,7 @@ comparison =
                     when "clients" then "Clientes"
                     else comparison.criteria
                 data = 
-                    header: "<tr><th>#{crit}</th><th>Duración promedio de ruteo de un pedido</th><th>Desvío estándar en el duración de ruteo</th><th>Tamaño promedio de cola de servidores</th><th>Desvío estándar de tamaño de cola de servidores</th><th>Tiempo ocioso promedio de servidores</th><th>Desvío estándar de tiempo ocioso de los servidores</th></tr>"
+                    header: "<tr><th>#{crit}</th><th>Duración promedio de ruteo de un pedido</th><th>Desvío estándar en el duración de ruteo</th><th>Tamaño promedio de cola de servidores</th><th>Desvío estándar de tamaño de cola de servidores</th><th>Ociosidad promedia de servidores</th><th>Desvío estándar de la ociosidad de los servidores</th></tr>"
                     random: displayer(random)
                     round_robin: displayer(round_robin)
                     smart_routing: displayer(smart_routing)
@@ -238,13 +241,18 @@ comparison =
                           img.src = "data:image/svg+xml;base64," + btoa(rstr)
 
             places = []
+            title = ""
             switch value
-                when "duration" then places = [2,3]
-                when "queue" then places = [4,5]
-                when "idle" then places = [6,7]
+                when "duration" then places = [2,3]; title = "Duración promedio"
+                when "queue" then places = [4,5]; title = "Tamaño de cola de servidores promedio"
+                when "idle" then places = [6,7]; title = "Ociosidad de los servidores"
 
             fit_funct = ()->
                 arr = []
+                arr.push("f(x) = a*x+b");
+                arr.push("g(x) = c*x+d");
+                arr.push("h(x) = e*x+f");
+                arr.push("i(x) = g*x+h");
                 arr.push("fit f(x) 'RandomRouting.plot' u 1:#{places[0]} via a,b") if _.contains(selected_strategies, "Random")
                 arr.push("fit g(x) 'RoundRobinRouting.plot' u 1:#{places[0]} via c,d") if _.contains(selected_strategies, "Round Robin")
                 arr.push("fit h(x) 'ShortestQueueRouting.plot' u 1:#{places[0]} via e,f") if _.contains(selected_strategies, "Shortest Queue")
@@ -266,14 +274,7 @@ comparison =
                         set output 'out.svg'
                         set format cb "%4.1f"
                         
-                        set title "Average idle time"
-
-                        f(x) = a*x+b
-                        g(x) = c*x+d
-                        h(x) = e*x+f
-                        i(x) = g*x+h
-
-                        
+                        set title "#{title}"
 
                         plot #{draw_funct()}
                     """, print_to_image

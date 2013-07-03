@@ -93,6 +93,11 @@ $routerColor: black;
     margin-top: 16px;
 }
 
+.js-router-queue-length {
+    width: 400px;
+    height: 20px;
+}
+
 $internetColor: lighten(#66ccff, 10%);
 
 .internet {

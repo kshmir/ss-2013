@@ -38,7 +38,7 @@ module Simulator
 					req = Request.new @t
 					if not @router.is_queue_full?
 						@router.queue << req
-						stats << { time: @t, event: { event_type: :arrival, req: req.id } }
+						stats << { time: @t, event: { event_type: :arrival, req: req.id }, router_queue_length: @router.queue.length }
 						@accepted += 1
 					else
 						stats << { time: @t, event: { event_type: :rejection, req: req.id } }
@@ -68,7 +68,7 @@ module Simulator
 					@clients.each_index { |idyno| @results[:queue_lengths][idyno] += @clients[idyno].queue.length }
 					@results[:durations] << req.beginning_of_processing_time - req.enter_into_router_time
 				end
-				@results[:idle_times] = @clients.map { |dyno| dyno.cumulative_idle_time @t }
+				@results[:idle_times] = @clients.map { |dyno| dyno.cumulative_idle_time(@t)*100 / @t }
 				@clients.each_index { |idyno| @results[:queue_lengths][idyno] /= @max_amount_of_iterations }
 				@results[:consolidated][:router_queue_length] /= @max_amount_of_iterations
 				@results[:consolidated][:mean_queue_length] = @results[:queue_lengths].mean
@@ -125,7 +125,7 @@ module Simulator
 					break if dyno.nil?
 					req = @router.queue.shift
 					dyno.enqueue_request @t, req
-					stats << { time: @t, event: { event_type: :routing, req: req.id, dyno: dyno.id } }
+					stats << { time: @t, event: { event_type: :routing, req: req.id, dyno: dyno.id }, router_queue_length: @router.queue.length }
 				end
 				stats
 			end
