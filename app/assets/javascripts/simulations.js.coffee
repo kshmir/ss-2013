@@ -242,11 +242,16 @@ comparison =
 
             places = []
             title = ""
+            xlabel = comparison.criteria
+            ylabel = ""
             switch value
-                when "duration" then places = [2,3]; title = "Duración promedio"
-                when "queue" then places = [4,5]; title = "Tamaño de cola de servidores promedio"
-                when "idle" then places = [6,7]; title = "Ociosidad de los servidores"
-                when "idle_between_dynos" then places = [8,9]; title = "Desvío entre servidores de la ociosidad"
+                when "duration" then places = [2,3]; title = "Duración promedio"; ylabel = "duración (milisegundos)"
+                when "queue" then places = [4,5]; title = "Tamaño de cola de servidores promedio"; ylabel = "número de pedidos en cola"
+                when "idle" then places = [6,7]; title = "Ociosidad de los servidores"; ylabel = "ociosidad (porcentaje)"
+                when "idle_between_dynos" then places = [8,9]; title = "Desvío entre servidores de la ociosidad"; ylabel = "ociosidad (porcentaje)"
+            switch comparison.criteria
+                when "clients" then xlabel = "número de servidores"
+                when "iterations" then xlabel = "número de iteraciones"
 
             fit_funct = ()->
                 arr = []
@@ -275,6 +280,8 @@ comparison =
                         set output 'out.svg'
                         set format cb "%4.1f"
                         
+                        set ylabel "#{ylabel}"
+                        set xlabel "#{xlabel}"
                         set title "#{title}"
 
                         plot #{draw_funct()}
