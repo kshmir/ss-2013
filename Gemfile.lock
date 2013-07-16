@@ -55,6 +55,7 @@ GEM
     debugger-linecache (1.2.0)
     debugger-ruby_core_source (1.2.2)
     diff-lcs (1.2.4)
+    dotenv (0.8.0)
     em-websocket (0.5.0)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.5.3)
@@ -63,6 +64,9 @@ GEM
     execjs (1.4.0)
       multi_json (~> 1.0)
     ffi (1.8.1)
+    foreman (0.63.0)
+      dotenv (>= 0.7)
+      thor (>= 0.13.6)
     formatador (0.2.4)
     guard (1.8.0)
       formatador (>= 0.2.4)
@@ -226,6 +230,7 @@ DEPENDENCIES
   better_errors
   bootstrap_forms
   coffee-rails (~> 3.2.1)
+  foreman
   guard
   guard-livereload
   haml
