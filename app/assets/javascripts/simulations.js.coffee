@@ -96,10 +96,13 @@ simulator =
                     data.stats = eval(data.json)
                     if (data.stats)
                         for stat in data.stats
-                            if (stat.event.event_type == "routing")
+                            if (stat.event.event_type == "arrival")
+                                anim_updateRouter(stat.time, stat.router_queue_length);
+                            else if (stat.event.event_type == "routing")
                                 anims[stat.event.req] = {}
                                 anims[stat.event.req].dyno = stat.event.dyno;
                                 anims[stat.event.req].start_time = stat.time;
+                                anim_updateRouter(stat.time, stat.router_queue_length);
                             else if (stat.event.event_type == "exit")
                                 anims[stat.event.req].end_time = stat.time;
                                 anims[stat.event.req].total_time = anims[stat.event.req].end_time - anims[stat.event.req].start_time;
@@ -118,8 +121,8 @@ simulator =
                         $(".router-queue-length").text("#{data.results.router_queue_length.toFixed(3)}")
                         $(".mean-queue-length").text("#{data.results.mean_queue_length.toFixed(3)}")
                         $(".std-dev-queue-length").text("#{data.results.std_dev_queue_length.toFixed(3)}")
-                        $(".mean-idle-time").text("#{data.results.mean_idle_time.toFixed(3)}ms")
-                        $(".std-dev-idle-time").text("#{data.results.std_dev_idle_time.toFixed(3)}ms")
+                        $(".mean-idle-time").text("#{data.results.mean_idle_time.toFixed(3)}%")
+                        $(".std-dev-idle-time").text("#{data.results.std_dev_idle_time.toFixed(3)}%")
                         $(".mean-duration").text("#{data.results.mean_duration.toFixed(3)}ms")
                         $(".std-dev-duration").text("#{data.results.std_dev_duration.toFixed(3)}ms")
                         $(".total").text("#{data.results.accepted + data.results.rejected} pedidos")
@@ -156,7 +159,7 @@ comparison =
             $(".js-comparison").addClass("hidden")
             comparison.ui.panel()
 
-        prepare_data: ()->
+        prepare_data: (usage = "print")->
             random         = []
             round_robin    = []
             shortest_queue = []
@@ -182,14 +185,37 @@ comparison =
                 a = []
                 for simu in array
                     res = simu.results
-                    a.push("#{simu[crit]} #{res.mean_duration} #{res.std_dev_duration} #{res.mean_queue_length} #{res.std_dev_queue_length} #{res.mean_idle_time} #{res.std_dev_idle_time}")
+                    a.push("#{simu[crit]} #{res.mean_duration} #{res.std_dev_duration} #{res.mean_queue_length} #{res.std_dev_queue_length} #{res.mean_idle_time} #{res.std_dev_idle_time} #{res.mean_idle_time_between_dynos} #{res.std_dev_idle_time_between_dynos}")
                 a.join("\n")
 
-            data = 
-                random: printer(random)
-                round_robin: printer(round_robin)
-                smart_routing: printer(smart_routing)
-                shortest_queue: printer(shortest_queue)
+
+            displayer = (array)->
+                crit = comparison.criteria
+                a = []
+                for simu in array
+                    res = simu.results
+                    a.push("<tr><td>#{simu[crit]}</td><td>#{res.mean_duration.toFixed(2)}</td><td>#{res.std_dev_duration.toFixed(2)}</td><td>#{res.mean_queue_length.toFixed(2)}</td><td>#{res.std_dev_queue_length.toFixed(2)}</td><td>#{res.mean_idle_time.toFixed(2)}</td><td>#{res.std_dev_idle_time.toFixed(2)}</td><td>#{res.mean_idle_time_between_dynos.toFixed(2)}</td><td>#{res.std_dev_idle_time_between_dynos.toFixed(2)}</td></tr>")
+                if a.length == 0 then null else a.join("\n")
+
+
+            if (usage == "display")
+                crit = switch comparison.criteria
+                    when "clients" then "Clientes"
+                    else comparison.criteria
+                data = 
+                    header: "<tr><th>#{crit}</th><th>Duración promedio de ruteo de un pedido</th><th>Desvío estándar en el duración de ruteo</th><th>Tamaño promedio de cola de servidores</th><th>Desvío estándar de tamaño de cola de servidores</th><th>Ociosidad promedia de servidores</th><th>Desvío estándar de la ociosidad de los servidores</th><th>Desvío estándar entre dynos promedio de la ociosidad</th><th>Desvío estándar del desvío estándar entre dynos de la ociosidad</th></tr>"
+                    random: displayer(random)
+                    round_robin: displayer(round_robin)
+                    smart_routing: displayer(smart_routing)
+                    shortest_queue: displayer(shortest_queue)
+            else
+                data = 
+                    random: printer(random)
+                    round_robin: printer(round_robin)
+                    smart_routing: printer(smart_routing)
+                    shortest_queue: printer(shortest_queue)
+            data
+
 
         plot: (selected_strategies, value)->
             $(".anim-loading").removeClass("hidden")
@@ -223,13 +249,24 @@ comparison =
                           img.src = "data:image/svg+xml;base64," + btoa(rstr)
 
             places = []
+            title = ""
+            xlabel = comparison.criteria
+            ylabel = ""
             switch value
-                when "duration" then places = [2,3]
-                when "queue" then places = [4,5]
-                when "idle" then places = [6,7]
+                when "duration" then places = [2,3]; title = "Duración promedio"; ylabel = "duración (milisegundos)"
+                when "queue" then places = [4,5]; title = "Tamaño de cola de servidores promedio"; ylabel = "número de pedidos en cola"
+                when "idle" then places = [6,7]; title = "Ociosidad de los servidores"; ylabel = "ociosidad (porcentaje)"
+                when "idle_between_dynos" then places = [8,9]; title = "Desvío entre servidores de la ociosidad"; ylabel = "ociosidad (porcentaje)"
+            switch comparison.criteria
+                when "clients" then xlabel = "número de servidores"
+                when "iterations" then xlabel = "número de iteraciones"
 
             fit_funct = ()->
                 arr = []
+                arr.push("f(x) = a*x+b");
+                arr.push("g(x) = c*x+d");
+                arr.push("h(x) = e*x+f");
+                arr.push("i(x) = g*x+h");
                 arr.push("fit f(x) 'RandomRouting.plot' u 1:#{places[0]} via a,b") if _.contains(selected_strategies, "Random")
                 arr.push("fit g(x) 'RoundRobinRouting.plot' u 1:#{places[0]} via c,d") if _.contains(selected_strategies, "Round Robin")
                 arr.push("fit h(x) 'ShortestQueueRouting.plot' u 1:#{places[0]} via e,f") if _.contains(selected_strategies, "Shortest Queue")
@@ -261,20 +298,10 @@ comparison =
             gnuplot.run """
                         set terminal svg enhanced size #{comparison.image_size[0]},#{comparison.image_size[1]}
                         set output 'out.svg'
-                        set format cb "%4.1f"
-                        
-                        set title "Comparación de resultados"
-
-                        set xlabel "#{xlabel()}"
-                        set ylabel "#{ylabel()}"
-
-                        f(x) = a*x+b
-                        g(x) = c*x+d
-                        h(x) = e*x+f
-                        i(x) = g*x+h
-
-                        
-
+                        set format cb "%4.1f"                        
+                        set ylabel "#{ylabel}"
+                        set xlabel "#{xlabel}"
+                        set title "#{title}"
                         plot #{draw_funct()}
                     """, print_to_image
                         
@@ -290,8 +317,9 @@ comparison =
                     comparison.results = eval(data.results)
                     
                     $(".js-compview").removeClass("hidden")
-                    
-                    data = comparison.data =  comparison.ui.prepare_data()
+                   
+                    data_display = comparison.ui.prepare_data("display")
+                    data = comparison.data =  comparison.ui.prepare_data("print")
 
                     comparison.plotter = new Gnuplot("/assets/gnuplot.js")
 
@@ -305,10 +333,23 @@ comparison =
                     comparison.plotter.putFile("SmartRouting.plot", data.smart_routing);
 
                     comparison.ui.plot(comparison.strategies(), comparison.variable())
-                    $(".random-results").text(data.random)
-                    $(".round_robin-results").text(data.round_robin)
-                    $(".shortest_queue-results").text(data.shortest_queue)
-                    $(".smart-results").text(data.smart_routing)
+                    $(".header-results").append(data_display.header)
+                    if (data_display.random)
+                        $(".random-results").append(data_display.random)
+                    else
+                        $(".random-table").addClass("hidden")
+                    if (data_display.round_robin)
+                        $(".round_robin-results").append(data_display.round_robin)
+                    else
+                        $(".round_robin-table").addClass("hidden")
+                    if (data_display.shortest_queue)
+                        $(".shortest_queue-results").append(data_display.shortest_queue)
+                    else
+                        $(".shortest_queue-table").addClass("hidden")
+                    if (data_display.smart_routing)
+                        $(".smart-results").append(data_display.smart_routing)
+                    else
+                        $(".smart-table").addClass("hidden")
 
 
     strategies: ()->

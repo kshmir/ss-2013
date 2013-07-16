@@ -50,7 +50,7 @@ module Simulator
 				end
 
 				def cumulative_idle_time t
-					idle? ? @cumu_idle_time + t - @start_idle_time : @cumu_idle_time
+						@cumu_idle_time
 				end
 
 				def idle?
